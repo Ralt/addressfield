@@ -1,121 +1,58 @@
-commerce_addressfield.addressfield_configuration:
-  path: '/admin/commerce/config/addressfield'
+entity.subdivision.list:
+  path: '/admin/commerce/config/subdivision'
   defaults:
-    _content: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
-    _title: 'addressfield configuration'
+    _entity_list: 'subdivision'
+    _title: 'Currencies'
   options:
     _admin_route: TRUE
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'administer stores'
 
-entity.commerce_addressfield.add_form:
-  path: '/admin/commerce/addressfields/add/{commerce_addressfield_type}'
+entity.subdivision.add_form:
+  path: '/admin/commerce/config/subdivision/add'
   defaults:
-    _content: '\Drupal\commerce_addressfield\Controller\CommerceaddressfieldController::add'
-    _title_callback: '\Drupal\commerce_addressfield\Controller\CommerceaddressfieldController::addPageTitle'
+    _entity_form: 'subdivision.add'
+    _title: 'Add a new subdivision'
   options:
     _admin_route: TRUE
   requirements:
-    _entity_create_access: 'commerce_addressfield'
+    _entity_create_access: 'subdivision'
 
-entity.commerce_addressfield.add_page:
-  path: '/admin/commerce/addressfields/add'
-  defaults:
-    _title: 'Create a new addressfield'
-    _content: '\Drupal\commerce_addressfield\Controller\CommerceaddressfieldController::addPage'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_create_access: 'commerce_addressfield'
-
-entity.commerce_addressfield.admin_form:
-  path: '/admin/commerce/config/addressfield-types/{commerce_addressfield_type}'
-  defaults:
-    _entity_form: 'commerce_addressfield_type.edit'
-    _title: 'Edit an addressfield type'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_access: 'commerce_addressfield_type.update'
-
-entity.commerce_addressfield.delete_form:
-  path: '/admin/commerce/addressfields/{commerce_addressfield}/delete'
-  defaults:
-    _entity_form: commerce_addressfield.delete
-    _title: 'Delete addressfield'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_access: 'commerce_addressfield.delete'
-
-entity.commerce_addressfield.devel:
-  path: '/admin/commerce/addressfields/{commerce_addressfield}/devel'
-  defaults:
-    _content: '\Drupal\commerce_addressfield\Controller\CommerceaddressfieldDevelController::addressfieldLoad'
-    _title: 'Dump an addressfield'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _module_dependencies: 'devel'
-    _permission: 'access devel information'
-
-entity.commerce_addressfield_type.list:
-  path: '/admin/commerce/config/addressfield-types'
-  defaults:
-    _entity_list: 'commerce_addressfield_type'
-    _title: 'addressfield types'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _permission: 'administer addressfield types'
-
-entity.commerce_addressfield.edit_form:
-  path: '/admin/commerce/addressfields/{commerce_addressfield}/edit'
-  defaults:
-    _entity_form: commerce_addressfield.edit
-    _title: 'Edit addressfield'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_access: 'commerce_addressfield.update'
-
-entity.commerce_addressfield.list:
-  path: '/admin/commerce/addressfields'
-  defaults:
-    _entity_list: 'commerce_addressfield'
-    _title: 'addressfields list'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _permission: 'administer addressfields'
-
-entity.commerce_addressfield_type.add_form:
-  path: '/admin/commerce/config/addressfield-types/add'
-  defaults:
-    _entity_form: 'commerce_addressfield_type.add'
-    _title: 'Add a new addressfield type'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_create_access: 'commerce_addressfield_type'
-
-entity.commerce_addressfield_type.delete_form:
-  path: '/admin/commerce/config/addressfield-types/{commerce_addressfield_type}/delete'
-  defaults:
-    _entity_form: 'commerce_addressfield_type.delete'
-    _title: 'Delete an addressfield type'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_access: 'commerce_addressfield_type.delete'
-
-entity.commerce_addressfield_type.devel:
-  path: '/admin/commerce/config/addressfield-types/{commerce_addressfield_type}/devel'
-  defaults:
-    _content: '\Drupal\commerce_addressfield\Controller\CommerceaddressfieldDevelController::addressfieldTypeLoad'
-    _title: 'Dump an addressfield type'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _module_dependencies: 'devel'
-    _permission: 'access devel information'
+#entity.subdivision.import:
+#  path: '/admin/commerce/config/subdivision/import'
+#  defaults:
+#    _form: '\Drupal\commerce_price\Form\SubdivisionImporterForm'
+#    _title: 'Import a subdivision'
+#  requirements:
+#    _permission: 'administer stores'
+#
+#entity.subdivision.edit_form:
+#  path: '/admin/commerce/config/subdivision/{subdivision}'
+#  defaults:
+#    _entity_form: 'subdivision.edit'
+#    _title: 'Edit a subdivision'
+#  options:
+#    _admin_route: TRUE
+#  requirements:
+#    _permission: 'administer stores'
+#
+#entity.subdivision.delete_form:
+#  path: '/admin/commerce/config/subdivision/{subdivision}/delete'
+#  defaults:
+#    _entity_form: 'subdivision.delete'
+#    _title: 'Delete a subdivision'
+#  options:
+#    _admin_route: TRUE
+#  requirements:
+#    _permission: 'administer stores'
+#
+#entity.subdivision.devel:
+#  path: '/admin/commerce/config/subdivision/{subdivision}/devel'
+#  defaults:
+#    _content: '\Drupal\commerce_price\Controller\CommerceCurrencyDevelController::currencyLoad'
+#    _title: 'Dump a subdivision'
+#  options:
+#    _admin_route: TRUE
+#  requirements:
+#    _module_dependencies: 'devel'
+#    _permission: 'access devel information'

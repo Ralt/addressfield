@@ -16,7 +16,15 @@ function commerce_addressfield_requirements($phase) {
   $requirements = array();
 
   if ($phase == 'install') {
+    /* @var $packages Drupal\composer_manager\ComposerPackages */
+    $packages = \Drupal::service('composer_manager.packages');
 
+    if (!array_key_exists('commerceguys/addressing', $packages->getInstalled())){
+      $requirements['addressing_library'] = array(
+        'description' => t("Addressfield requires the Commerce Guys' Addressing Library, run !command on the command line", array('!command' => 'drush composer install')),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
   }
 
   return $requirements;

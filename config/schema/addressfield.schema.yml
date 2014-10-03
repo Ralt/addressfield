@@ -1,0 +1,23 @@
+addressfield.subdivision.*:
+  type: config_entity
+  label: 'Subdivision'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: label
+      label: 'Name'
+      translatable: true
+    code:
+      type: string
+      label: 'Code'
+    parent_id:
+      type: string
+      label: 'Parent ID'
+    country_code:
+      type: string
+      label: 'Country code'
+    status:
+      label: Status
+      type: boolean
