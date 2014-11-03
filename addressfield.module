@@ -2,19 +2,20 @@
 
 /**
  * @file
- * Defines the core Commerce addressfield entity type.
+ * Defines the core addressfield entity type.
  */
 use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_entity_operation().
  *
- * Add devel link if this entity type is /commerce_addressfield[_type]/.
+ * Add devel link if this entity type is /addressfield[_type]/.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @return array
  */
-function commerce_addressfield_entity_operation(EntityInterface $entity) {
+function addressfield_entity_operation(EntityInterface $entity) {
   $operations = array();
   if (!\Drupal::moduleHandler()->moduleExists('devel')) {
     return $operations;
   }
-
 }

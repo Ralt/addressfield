@@ -45,8 +45,7 @@ class SubdivisionDeleteForm extends EntityConfirmFormBase {
       $this->entity->delete();
       $form_state->setRedirectUrl($this->getCancelUrl());
       drupal_set_message($this->t('Subdivision %label has been deleted.', array('%label' => $this->entity->label())));
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       drupal_set_message($this->t('Subdivision %label could not be deleted.', array('%label' => $this->entity->label())), 'error');
       $this->logger('addressfield')->error($e);
     }

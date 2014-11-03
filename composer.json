@@ -1,11 +1,11 @@
 {
-    "name": "drupal/addressfield",
-    "type": "drupal-module",
-    "description": "Defines flexible address field entity.",
-    "homepage": "http://drupal.org/project/addressfield",
-    "license": "GPL-2.0+",
-    "require": {
-        "commerceguys/intl": "dev-master",
-        "commerceguys/addressing": "dev-master"
-    }
+  "name": "drupal/addressfield",
+  "type": "drupal-module",
+  "description": "Defines flexible address field entity.",
+  "homepage": "http://drupal.org/project/addressfield",
+  "license": "GPL-2.0+",
+  "require": {
+    "commerceguys/intl": "dev-master",
+    "commerceguys/addressing": "dev-master"
+  }
 }

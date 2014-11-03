@@ -7,8 +7,14 @@
 
 namespace Drupal\addressfield\Entity;
 
-use CommerceGuys\Addressing\Metadata\SubdivisionInterface;
+use CommerceGuys\Addressing\Model\SubdivisionInterface;
+use CommerceGuys\Addressing\Provider\DataProvider;
+use CommerceGuys\Addressing\Provider\DataProviderInterface;
+use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\Annotation\ConfigEntityType;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Defines the Subdivision configuration entity.
@@ -17,12 +23,12 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   id = "subdivision",
  *   label = @Translation("Subdivision"),
  *   handlers = {
+ *     "list_builder" = "Drupal\addressfield\SubdivisionListBuilder",
  *     "form" = {
  *       "add" = "Drupal\addressfield\Form\SubdivisionForm",
  *       "edit" = "Drupal\addressfield\Form\SubdivisionForm",
  *       "delete" = "Drupal\addressfield\Form\SubdivisionFormDeleteForm"
- *     },
- *     "list_builder" = "Drupal\addressfield\Controller\SubdivisionListBuilder",
+ *     }
  *   },
  *   admin_permission = "administer",
  *   config_prefix = "subdivision",
@@ -97,11 +103,11 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   protected $locale;
 
   /**
-   * The metadata repository.
+   * The data provider.
    *
-   * @var AddressMetadataRepositoryInterface
+   * @var DataProviderInterface
    */
-  protected static $repository;
+  protected static $dataProvider;
 
   /**
    * {@inheritdoc}
@@ -109,8 +115,8 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   public function getParent() {
     if (!$this->parent->getCode()) {
       // The parent object is incomplete. Load the full one.
-      $repository = self::getRepository();
-      $this->parent = $repository->getSubdivision($this->parent->getId());
+      $dataProvider = $this->getDataProvider();
+      $this->parent = $dataProvider->getSubdivision($this->parent->getId());
     }
 
     return $this->parent;
@@ -217,11 +223,11 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    * {@inheritdoc}
    */
   public function getChildren() {
-    // When a subdivision has children the metadata repository sets $children
+    // When a subdivision has children the data provider sets $children
     // to array('load'), to indicate that they should be lazy loaded.
     if (!isset($this->children) || $this->children === array('load')) {
-      $repository = self::getRepository();
-      $this->children = $repository->getSubdivisions($this->countryCode, $this->id, $this->locale);
+      $dataProvider = self::getDataProvider();
+      $this->children = $dataProvider->getSubdivisions($this->countryCode, $this->id, $this->locale);
     }
 
     return $this->children;
@@ -285,6 +291,7 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    * Sets the locale.
    *
    * @param string $locale The locale.
+   * @return $this
    */
   public function setLocale($locale) {
     $this->locale = $locale;
@@ -293,25 +300,162 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   }
 
   /**
-   * Gets the metadata repository.
+   * Gets the data provider.
    *
-   * @return AddressMetadataRepositoryInterface The metadata repository.
+   * @return DataProviderInterface The data provider.
    */
-  public static function getRepository() {
-    if (!isset(self::$repository)) {
-      self::setRepository(new AddressMetadataRepository());
+  public static function getDataProvider() {
+    if (!isset(self::$dataProvider)) {
+      self::setDataProvider(new DataProvider());
     }
 
-    return self::$repository;
+    return self::$dataProvider;
   }
 
   /**
-   * Sets the metadata repository.
-   *
-   * @param AddressMetadataRepositoryInterface $repository The metadata repository.
+   * Sets the data Subdivision provider.
+   * @param \CommerceGuys\Addressing\Provider\DataProviderInterface $dataProvider
    */
-  public static function setRepository(AddressMetadataRepositoryInterface $repository) {
-    self::$repository = $repository;
+  public static function setDataProvider(DataProviderInterface $dataProvider) {
+    self::$dataProvider = $dataProvider;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The product revision ID.'))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
+
+    $fields['parent'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Parent'))
+      ->setDescription(t('The parent of this subdivision.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'subdivision')
+      ->setSetting('handler', 'default')
+      ->setDefaultValueCallback('Drupal\addressfield\Entity\Subdivision::getParent')
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'subdivision',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['countryCode'] = BaseFieldDefinition::create('countryCode')
+      ->setLabel(t('Country Code'))
+      ->setDescription(t('The country code of this subdivision.'))
+      ->setRevisionable(TRUE)
+      ->setRequired(TRUE);
+
+    $fields['id'] = BaseFieldDefinition::create('id')
+      ->setLabel(t('ID'))
+      ->setRequired(TRUE)
+      ->setDescription(t('The ID code of this subdivision.'));
+
+    $fields['code'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Code'))
+      ->setDescription(t('The subdivision code for this Subdivision.'))
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Name'))
+      ->setDescription(t('The name of the subdivision.'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRequired(TRUE);
+
+    $fields['postalCodePattern'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Postal Code Pattern'))
+      ->setDescription(t('The Postal Code Pattern of the subdivision.'))
+      ->setRevisionable(TRUE)
+      ->setRequired(TRUE);
+
+    $fields['locale'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Locale'))
+      ->setDescription(t('The Locale of the subdivision.'))
+      ->setRevisionable(TRUE)
+      ->setRequired(TRUE);
+
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Active'))
+      ->setDescription(t('Disabled products cannot be added to shopping carts and may be hidden in administrative product lists.'))
+      ->setDefaultValue(TRUE)
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setSettings(array(
+        'default_value' => 1,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'boolean_checkbox',
+        'weight' => 10,
+        'settings' => array(
+          'display_label' => TRUE
+        )
+      ))
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['created'] = BaseFieldDefinition::create('created')
+      ->setLabel(t('Created'))
+      ->setDescription(t('The time that the product was created.'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'timestamp',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['changed'] = BaseFieldDefinition::create('changed')
+      ->setLabel(t('Changed'))
+      ->setDescription(t('The time that the product was last edited.'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE);
+
+    $fields['revision_log'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Revision log message'))
+      ->setDescription(t('The log entry explaining the changes in this revision.'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textarea',
+        'weight' => 25,
+        'settings' => array(
+          'rows' => 4,
+        ),
+      ));
+
+    return $fields;
+  }
 }

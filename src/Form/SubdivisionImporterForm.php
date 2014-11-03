@@ -2,14 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\commerce_price\Form\CommerceCurrencyImporterForm.
+ * Contains \Drupal\addressfield\Form\CommerceCurrencyImporterForm.
  */
 
-namespace Drupal\commerce_price\Form;
+namespace Drupal\addressfield\Form;
 
+use CommerceGuys\Intl\Country\CountryRepository;
 use CommerceGuys\Intl\Currency\CurrencyInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use CommerceGuys\Addressing\Repository\AddressFormatRepository;
+use CommerceGuys\Addressing\Repository\SubdivisionRepository;
 
 /**
  * Builds the form to import a currency.
@@ -19,7 +22,7 @@ class SubdivisionImporterForm extends FormBase {
   /**
    * The currency importer.
    *
-   * @var \Drupal\commerce_price\CurrencyImporterInterface
+   * @var \Drupal\addressfield\CurrencyImporterInterface
    */
   protected $currencyImporter;
 
@@ -27,7 +30,7 @@ class SubdivisionImporterForm extends FormBase {
    * Constructs a new CommerceCurrencyImporterForm.
    */
   public function __construct() {
-    $this->currencyImporter = \Drupal::service('commerce_price.currency_importer');
+//    $this->currencyImporter = \Drupal::service('addressfield.currency_importer');
   }
 
   /**
@@ -109,10 +112,9 @@ class SubdivisionImporterForm extends FormBase {
       else {
         $form_state->setRedirect('entity.commerce_currency.list');
       }
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       drupal_set_message($this->t('The %label currency was not imported.', array('%label' => $currency->label())), 'error');
-      $this->logger('commerce_price')->error($e);
+      $this->logger('addressfield')->error($e);
       $form_state->setRebuild();
     }
   }
@@ -121,6 +123,6 @@ class SubdivisionImporterForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'commerce_price_currency_importer';
+    return 'addressfield_currency_importer';
   }
 }

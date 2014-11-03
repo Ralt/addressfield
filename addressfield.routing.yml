@@ -1,15 +1,15 @@
 entity.subdivision.list:
-  path: '/admin/commerce/config/subdivision'
+  path: '/admin/config/subdivision'
   defaults:
     _entity_list: 'subdivision'
-    _title: 'Currencies'
+    _title: 'Subdivisions'
   options:
     _admin_route: TRUE
   requirements:
-    _permission: 'administer stores'
+    _permission: 'administer subdivisions'
 
 entity.subdivision.add_form:
-  path: '/admin/commerce/config/subdivision/add'
+  path: '/admin/config/subdivision/add'
   defaults:
     _entity_form: 'subdivision.add'
     _title: 'Add a new subdivision'
@@ -18,41 +18,41 @@ entity.subdivision.add_form:
   requirements:
     _entity_create_access: 'subdivision'
 
-#entity.subdivision.import:
-#  path: '/admin/commerce/config/subdivision/import'
-#  defaults:
-#    _form: '\Drupal\commerce_price\Form\SubdivisionImporterForm'
-#    _title: 'Import a subdivision'
-#  requirements:
-#    _permission: 'administer stores'
-#
-#entity.subdivision.edit_form:
-#  path: '/admin/commerce/config/subdivision/{subdivision}'
-#  defaults:
-#    _entity_form: 'subdivision.edit'
-#    _title: 'Edit a subdivision'
-#  options:
-#    _admin_route: TRUE
-#  requirements:
-#    _permission: 'administer stores'
-#
-#entity.subdivision.delete_form:
-#  path: '/admin/commerce/config/subdivision/{subdivision}/delete'
-#  defaults:
-#    _entity_form: 'subdivision.delete'
-#    _title: 'Delete a subdivision'
-#  options:
-#    _admin_route: TRUE
-#  requirements:
-#    _permission: 'administer stores'
-#
-#entity.subdivision.devel:
-#  path: '/admin/commerce/config/subdivision/{subdivision}/devel'
-#  defaults:
-#    _content: '\Drupal\commerce_price\Controller\CommerceCurrencyDevelController::currencyLoad'
-#    _title: 'Dump a subdivision'
-#  options:
-#    _admin_route: TRUE
-#  requirements:
-#    _module_dependencies: 'devel'
-#    _permission: 'access devel information'
+entity.subdivision.import:
+  path: '/admin/config/subdivision/import'
+  defaults:
+    _form: '\Drupal\addressfield\Form\SubdivisionImporterForm'
+    _title: 'Import a subdivision'
+  requirements:
+    _permission: 'administer subdivisions'
+
+entity.subdivision.edit_form:
+  path: '/admin/config/subdivision/{subdivision}'
+  defaults:
+    _entity_form: 'subdivision.edit'
+    _title: 'Edit a subdivision'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer subdivisions'
+
+entity.subdivision.delete_form:
+  path: '/admin/config/subdivision/{subdivision}/delete'
+  defaults:
+    _entity_form: 'subdivision.delete'
+    _title: 'Delete a subdivision'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer subdivisions'
+
+entity.subdivision.devel:
+  path: '/admin/config/subdivision/{subdivision}/devel'
+  defaults:
+    _content: '\Drupal\addressfield\Controller\CommerceCurrencyDevelController::currencyLoad'
+    _title: 'Dump a subdivision'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _module_dependencies: 'devel'
+    _permission: 'access devel information'

@@ -1,0 +1,4 @@
+services:
+  addressfield.currency_importer:
+    class: Drupal\Core\Language\LanguageManager
+    arguments: ['@language.default']
