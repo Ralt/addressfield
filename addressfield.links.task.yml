@@ -1,0 +1,9 @@
+entity.address_format.list:
+  route_name: 'entity.address_format.list'
+  base_route: 'entity.address_format.list'
+  title: 'List'
+
+entity.address_format.import:
+  route_name: 'entity.address_format.import'
+  base_route: 'entity.address_format.list'
+  title: 'Import'

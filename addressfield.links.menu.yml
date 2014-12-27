@@ -1,5 +1,12 @@
+entity.address_format.list:
+  title: 'Addressfield Address Formats'
+  parent: system.admin_config_regional
+  description: 'Administer the address format entity defined by the addressfield module.'
+  route_name: entity.address_format.list
+
 entity.subdivision.list:
   title: 'Addressfield Subdevisions'
   parent: system.admin_config_regional
   description: 'Administer the subdevision entity defined by the addressfield module.'
-  route_name: entity.subdivision.list 
+  route_name: entity.subdivision.list
+

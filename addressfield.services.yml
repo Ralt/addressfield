@@ -1,4 +1,8 @@
 services:
+  addressfield.address_format_importer:
+    class: Drupal\addressfield\AddressFormatImporter
+    arguments: ['@entity.manager', '@language_manager']
+
   addressfield.currency_importer:
     class: Drupal\Core\Language\LanguageManager
     arguments: ['@language.default']
