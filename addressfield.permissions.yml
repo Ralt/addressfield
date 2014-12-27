@@ -7,3 +7,8 @@
   title: 'Administer addressfield types'
   description: 'Allows users to create, update, and delete addressfield types.'
   'restrict access': TRUE
+
+'administer subdevisions':
+  title: 'Administer Subdevisions'
+  description: 'Allows users to create, update, and delete Subdevisions entities.'
+  'restrict access': TRUE
