@@ -30,7 +30,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *       "delete" = "Drupal\addressfield\Form\SubdivisionFormDeleteForm"
  *     }
  *   },
- *   admin_permission = "administer subdevisions",
+ *   admin_permission = "administer subdivisions",
  *   config_prefix = "subdivision",
  *   entity_keys = {
  *     "id" = "id",

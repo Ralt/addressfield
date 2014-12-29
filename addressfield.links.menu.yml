@@ -5,8 +5,8 @@ entity.address_format.list:
   route_name: entity.address_format.list
 
 entity.subdivision.list:
-  title: 'Addressfield Subdevisions'
+  title: 'Addressfield Subdivisions'
   parent: system.admin_config_regional
-  description: 'Administer the subdevision entity defined by the addressfield module.'
+  description: 'Administer the subdivision entity defined by the addressfield module.'
   route_name: entity.subdivision.list
 

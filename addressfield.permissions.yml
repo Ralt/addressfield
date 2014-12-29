@@ -13,8 +13,8 @@
   description: 'Allows users to create, update, and delete Address Format entities.'
   'restrict access': TRUE
 
-'administer subdevisions':
-  title: 'Administer Subdevisions'
-  description: 'Allows users to create, update, and delete Subdevisions entities.'
+'administer subdivisions':
+  title: 'Administer Subdivisions'
+  description: 'Allows users to create, update, and delete Subdivisions entities.'
   'restrict access': TRUE
 
