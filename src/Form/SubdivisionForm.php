@@ -97,15 +97,6 @@ class SubdivisionForm extends EntityForm {
   }
 
   /**
-   * Validates the currency code.
-   * @param array $element
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param array $form
-   */
-  public function validateCurrencyCode(array $element, FormStateInterface &$form_state, array $form) {
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {

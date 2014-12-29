@@ -15,7 +15,7 @@ addressfield.subdivision.*:
     parent_id:
       type: string
       label: 'Parent ID'
-    country_code:
+    countryCode:
       type: string
       label: 'Country code'
     status:

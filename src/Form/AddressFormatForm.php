@@ -7,10 +7,10 @@
 
 namespace Drupal\addressfield\Form;
 
-use CommerceGuys\Intl\Country\CountryRepository;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Locale\CountryManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AddressFormatForm extends EntityForm {
@@ -39,7 +39,7 @@ class AddressFormatForm extends EntityForm {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($entity_manager->getStorage('commerce_address_format'));
+    return new static($entity_manager->getStorage('address_format'));
   }
 
   /**
@@ -49,20 +49,12 @@ class AddressFormatForm extends EntityForm {
     $form = parent::form($form, $form_state);
     $address_format = $this->entity;
 
-    // Reads the country definitions from resources/country.
-    $countryRepository = new CountryRepository;
-    $countries = $countryRepository->getAll();
-    $country_options = array();
-    foreach ($countries as $country) {
-      $country_options[$country->getCountryCode()] = $this->t($country->getName());
-    }
-
     $form['countryCode'] = array(
       '#type' => 'select',
       '#title' => $this->t('Country code'),
       '#default_value' => $address_format->getCountryCode(),
       '#required' => TRUE,
-      '#options' => $country_options,
+      '#options' => CountryManager::getStandardList(),
     );
 
     $form['format'] = array(
