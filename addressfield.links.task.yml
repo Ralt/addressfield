@@ -7,3 +7,13 @@ entity.address_format.import:
   route_name: 'entity.address_format.import'
   base_route: 'entity.address_format.list'
   title: 'Import'
+
+entity.subdivision.list:
+  route_name: 'entity.subdivision.list'
+  base_route: 'entity.subdivision.list'
+  title: 'List'
+
+entity.subdivision.import:
+  route_name: 'entity.subdivision.import'
+  base_route: 'entity.subdivision.list'
+  title: 'Import'

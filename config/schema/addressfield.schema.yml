@@ -12,7 +12,7 @@ addressfield.subdivision.*:
     code:
       type: string
       label: 'Code'
-    parent_id:
+    parentId:
       type: string
       label: 'Parent ID'
     countryCode:

@@ -7,9 +7,10 @@
 
 namespace Drupal\addressfield\Form;
 
-use Drupal\addressfield\AddressFieldImporter;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Locale\CountryManager;
+use Drupal\addressfield\AddressFieldImporter;
 
 
 /**
@@ -45,10 +46,10 @@ class AddressFormatImporterForm extends FormBase {
     else {
       $form['country_code'] = array(
         '#type' => 'select',
-        '#title' => $this->t('Country code'),
+        '#title' => $this->t('Country'),
         '#description' => $this->t('Please select the country you would like to import.'),
         '#required' => TRUE,
-        '#options' => $this->getAddressFormatOptions($address_formats),
+        '#options' => CountryManager::getStandardList(),
       );
 
       $form['actions']['#type'] = 'actions';
@@ -68,25 +69,6 @@ class AddressFormatImporterForm extends FormBase {
     }
 
     return $form;
-  }
-
-  /**
-   * Returns an options list for address formats.
-   *
-   * @param AddressFormatInterface[] $currencies
-   *   An array of address formats.
-   *
-   * @return array
-   *   The list of options for a select widget.
-   */
-  public function getAddressFormatOptions(array $address_formats) {
-    $options = array();
-    foreach ($address_formats as $country_code => $address_formats) {
-      $options[$country_code] = $country_code;
-    }
-    asort($options);
-
-    return $options;
   }
 
   /**

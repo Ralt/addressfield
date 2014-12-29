@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\AddressFieldImporter.
+ * Contains \Drupal\addressfield\AddressFormatImporter.
  */
 
 namespace Drupal\addressfield;
@@ -82,7 +82,7 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
 
     $values = array(
       'countryCode' => $address_format->getCountryCode(),
-      'format' => $address_format->getformat(),
+      'format' => $address_format->getFormat(),
       'requiredFields' => $address_format->getRequiredFields(),
       'uppercaseFields' => $address_format->getUppercaseFields(),
       'administrativeAreaType' => $address_format->getAdministrativeAreaType(),
@@ -101,7 +101,7 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    * Get a single currency.
    *
    * @param string $country_code
-   *   The country_code code.
+   *   The country code.
    * @param \Drupal\Core\Language\LanguageInterface $language
    *   The language.
    *

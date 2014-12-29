@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\AddressFieldImporterInterface.
+ * Contains \Drupal\addressfield\AddressFormatImporterInterface.
  */
 
 namespace Drupal\addressfield;
@@ -23,10 +23,10 @@ interface AddressFormatImporterInterface {
   /**
    * Creates a new address format object for the given country code.
    *
-   * @param string $$country_code
+   * @param string $country_code
    *   The country code.
    *
-   * @return \Drupal\commerce_price\Entity\CommerceCurrency | bool
+   * @return \Drupal\addressfield\Entity\AddressFormat | bool
    *    The new address format or false if the address format is already imported.
    */
   public function importAddressFormat($country_code);
