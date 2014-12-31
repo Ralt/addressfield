@@ -217,10 +217,7 @@ class Zone extends ConfigEntityBase implements ZoneInterface {
   {
     if (!$this->hasMember($member)) {
       $member->setParentZone($this);
-      // @todo LazyPluginCollection has set($instance_id, $value)...
-      // and it doesn't implement ArrayAcces, so can't do $obj[] = $foo
-      // I don't like the API... have to decide how to handle that
-      $this->membersCollection->add($member);
+      $this->membersCollection->addInstanceId($member->getId(), $member);
     }
     return $this;
   }
