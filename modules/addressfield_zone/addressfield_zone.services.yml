@@ -1,0 +1,4 @@
+services:
+  plugin.manager.addressfield_zone.member:
+    class: Drupal\addressfield_zone\ZoneMemberManager
+    parent: default_plugin_manager

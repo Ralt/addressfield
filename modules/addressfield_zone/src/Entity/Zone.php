@@ -12,6 +12,7 @@ use CommerceGuys\Zone\Model\ZoneInterface;
 use CommerceGuys\Zone\Model\ZoneMemberInterface;
 use CommerceGuys\Addressing\Model\AddressInterface;
 use Drupal\Core\Plugin\DefaultLazyPluginCollection;
+use CommerceGuys\Zone\Exception\UnexpectedTypeException;
 
 /**
  * Defines the Zone configuration entity.
@@ -27,8 +28,8 @@ use Drupal\Core\Plugin\DefaultLazyPluginCollection;
  *     },
  *     "list_builder" = "Drupal\addressfield_zone\Controller\ZoneListBuilder"
  *   },
- *   admin_permission = "administer zones"
- *   config_prefix = "zone"
+ *   admin_permission = "administer zones",
+ *   config_prefix = "addressfield_zone",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name",
@@ -37,7 +38,7 @@ use Drupal\Core\Plugin\DefaultLazyPluginCollection;
  *     "members" = "members"
  *   },
  *   links = {
- *     "edit-form" = "entity.zone.edit_form"
+ *     "edit-form" = "entity.zone.edit_form",
  *     "delete-form" = "entity.zone.delete_form"
  *   }
  * )
@@ -180,10 +181,23 @@ class Zone extends ConfigEntityBase implements ZoneInterface {
   }
 
   /**
+   * Returns the zone member plugin manager.
+   *
+   * @return \Drupal\Component\Plugin\PluginManagerInterface
+   *   The zone member plugin manager.
+   */
+  protected function getZoneMemberPluginManager() {
+    return \Drupal::service('plugin.manager.addressfield_zone.member');
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function setMembers(DefaultLazyPluginCollection $members)
+  public function setMembers($members)
   {
+    if (!($members instanceof DefaultLazyPluginCollection)) {
+      throw new UnexpectedTypeException($members, 'DefaultLazyPluginException');
+    }
     $this->membersCollection = $members;
     return $this;
   }

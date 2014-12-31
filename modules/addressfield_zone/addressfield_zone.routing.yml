@@ -1,0 +1,9 @@
+entity.addressfield_zone.list:
+  path: '/admin/config/regional/zones'
+  defaults:
+    _entity_list: 'addressfield_zone'
+    _title: 'Zones'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer zones'

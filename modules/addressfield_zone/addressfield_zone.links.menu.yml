@@ -1,0 +1,5 @@
+entity.addressfield_zone.list:
+  title: Addressfield Zones
+  route_name: entity.addressfield_zone.list
+  parent: system.admin_config_regional
+  description: 'Administer the zone entity defined by the addressfield module.'
