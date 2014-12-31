@@ -1,0 +1,23 @@
+# Schema for the configuration files of the addressfield_zone module.
+
+addressfield_zone.zone.*:
+  type: config_entity
+  label: 'Zone'
+  mapping:
+    id:
+      type: string
+      label: 'Zone id'
+    name:
+      type: string
+      label: 'Zone name'
+    scope:
+      type: string
+      label: 'Zone scope'
+    priority:
+      type: integer
+      label: 'Zone priority'
+    members:
+      type: sequence
+      label: 'Zone members'
+      sequence:
+        - type: string
