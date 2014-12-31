@@ -1,6 +1,6 @@
 # Schema for the configuration files of the addressfield_zone module.
 
-addressfield_zone.zone.*:
+addressfield_zone.addressfield_zone.*:
   type: config_entity
   label: 'Zone'
   mapping:

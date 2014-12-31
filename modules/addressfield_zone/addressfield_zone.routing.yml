@@ -1,8 +1,38 @@
 entity.addressfield_zone.list:
-  path: '/admin/config/regional/zones'
+  path: '/admin/config/regional/zone'
   defaults:
     _entity_list: 'addressfield_zone'
     _title: 'Zones'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer zones'
+
+entity.addressfield_zone.add_form:
+  path: '/admin/config/regional/zone/add'
+  defaults:
+    _entity_form: 'addressfield_zone.add'
+    _title: 'Add a new zone'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _entity_create_access: 'addressfield_zone'
+
+entity.addressfield_zone.edit_form:
+  path: '/admin/config/regional/zone/{addressfield_zone}/edit'
+  defaults:
+    _entity_form: 'addressfield_zone.edit'
+    _title: 'Edit a zone'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer zones'
+
+entity.addressfield_zone.delete_form:
+  path: '/admin/config/regional/zone/{addressfield_zone}/delete'
+  defaults:
+    _entity_form: 'addressfield_zone.delete'
+    _title: 'Delete a zone'
   options:
     _admin_route: TRUE
   requirements:

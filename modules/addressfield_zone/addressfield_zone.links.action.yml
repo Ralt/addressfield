@@ -1,0 +1,5 @@
+entity.addressfield_zone.add_form:
+  route_name: entity.addressfield_zone.add_form
+  title: 'Add a new zone'
+  appears_on:
+    - entity.addressfield_zone.list

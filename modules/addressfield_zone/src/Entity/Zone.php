@@ -38,8 +38,8 @@ use CommerceGuys\Zone\Exception\UnexpectedTypeException;
  *     "members" = "members"
  *   },
  *   links = {
- *     "edit-form" = "entity.zone.edit_form",
- *     "delete-form" = "entity.zone.delete_form"
+ *     "edit-form" = "entity.addressfield_zone.edit_form",
+ *     "delete-form" = "entity.addressfield_zone.delete_form"
  *   }
  * )
  */
