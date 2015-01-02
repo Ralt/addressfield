@@ -7,6 +7,10 @@
 
 namespace Drupal\addressfield_zone\Plugin\ZoneMember;
 
+use Drupal\addressfield_zone\ZoneMemberInterface;
+use CommerceGuys\Addressing\Model\AddressInterface;
+use CommerceGuys\Addressing\Model\ZoneInterface;
+
 /**
  * Defines a country zone.
  *
@@ -16,13 +20,60 @@ namespace Drupal\addressfield_zone\Plugin\ZoneMember;
  * )
  */
 class Country implements ZoneMemberInterface {
-  public function getPluginId() {}
-  public function getPluginDefinition() {}
-  public function getId(){}
-  public function setId($id){}
-  public function getName(){}
-  public function setName($name){}
-  public function getParentZone(){}
-  public function setParentZone(ZoneInterface $parentZone = null){}
-  public function match(AddressInterface $address) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPluginId() {
+    return 'zonemember_country';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPluginDefinition() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getId() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setId($id) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getName() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setName($name) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getParentZone() {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setParentZone(ZoneInterface $parentZone = null) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function match(AddressInterface $address) {
+  }
+
 }
