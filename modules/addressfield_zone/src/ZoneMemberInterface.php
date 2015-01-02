@@ -14,4 +14,4 @@ use CommerceGuys\Zone\Model\ZoneMemberInterface as ZoneZoneMemberInterface;
 /**
  * Defines the interface for zone members.
  */
-interface ZoneMemberInterface extends PluginInspectionInterface, ConfigurablePluginInterface, ZoneZoneMemberInterface {}
+interface ZoneMemberInterface extends PluginInspectionInterface, ZoneZoneMemberInterface {}

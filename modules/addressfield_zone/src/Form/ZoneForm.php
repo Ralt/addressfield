@@ -78,6 +78,29 @@ class ZoneForm extends EntityForm {
       '#default_value' => $zone->getPriority(),
     );
 
+    // Build the list of existing zone members for this zone.
+    $form['members'] = array(
+      '#type' => 'table',
+      '#header' => array(
+        $this->t('Zone Member'),
+        $this->t('Weight'),
+        $this->t('Operations'),
+      ),
+      '#tabledrag' => array(
+        array(
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'zone-member-order-weight',
+        ),
+      ),
+      '#attributes' => array(
+        'id' => 'zone-zone-members',
+      ),
+      '#empty' => t('There are currently no zone member in this zone. Add one by selecting an option below.'),
+      // Render zone members below parent elements.
+      '#weight' => 5,
+    );
+
     return $form;
   }
 

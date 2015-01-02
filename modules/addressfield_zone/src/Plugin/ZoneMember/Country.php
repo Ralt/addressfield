@@ -15,4 +15,14 @@ namespace Drupal\addressfield_zone\Plugin\ZoneMember;
  *   label = @Translation("Country")
  * )
  */
-class Country {}
+class Country implements ZoneMemberInterface {
+  public function getPluginId() {}
+  public function getPluginDefinition() {}
+  public function getId(){}
+  public function setId($id){}
+  public function getName(){}
+  public function setName($name){}
+  public function getParentZone(){}
+  public function setParentZone(ZoneInterface $parentZone = null){}
+  public function match(AddressInterface $address) {}
+}
