@@ -6,3 +6,11 @@ services:
   addressfield.subdivision_importer:
     class: Drupal\addressfield\SubdivisionImporter
     arguments: ['@entity.manager', '@language_manager']
+
+  addressfield.data_provider:
+    class: Drupal\addressfield\DataProvider
+    arguments: ['@country_manager', '@entity.manager']
+
+  addressfield.postal_formatter:
+    class: CommerceGuys\Addressing\Formatter\PostalFormatter
+    arguments: ['@addressfield.data_provider']
