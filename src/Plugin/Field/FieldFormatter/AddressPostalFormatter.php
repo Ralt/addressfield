@@ -55,7 +55,7 @@ class AddressPostalFormatter extends FormatterBase {
     $settings = $this->getSettings();
     $elements = array();
     foreach ($items as $delta => $item) {
-      $elements[$delta] = array('#markup' => $item->getPostal($settings['originCountry']));
+      $elements[$delta] = array('#markup' => '');
     }
     return $elements;
   }

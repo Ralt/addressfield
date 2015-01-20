@@ -7,15 +7,11 @@
 
 namespace Drupal\addressfield\Plugin\Field\FieldType;
 
-use Drupal\addressfield\AddressItemInterface;
+use CommerceGuys\Addressing\Model\AddressInterface;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
-use CommerceGuys\Addressing\Formatter\PostalFormatter;
-use CommerceGuys\Addressing\Provider\DataProvider;
-use CommerceGuys\Addressing\Repository\AddressFormatRepository;
-use CommerceGuys\Addressing\Model\Address;
 
 /**
  * Plugin implementation of the 'address' field type.
@@ -23,12 +19,12 @@ use CommerceGuys\Addressing\Model\Address;
  * @FieldType(
  *   id = "address",
  *   label = @Translation("Address"),
- *   description = @Translation("Address in multinational formats"),
+ *   description = @Translation("An entity field containing a postal address"),
  *   default_widget = "address_default",
- *   default_formatter = "address_postal"
+ *   default_formatter = "address_default"
  * )
  */
-class AddressItem extends FieldItemBase implements AddressItemInterface {
+class AddressItem extends FieldItemBase implements AddressInterface {
 
   /**
    * {@inheritdoc}
@@ -36,16 +32,12 @@ class AddressItem extends FieldItemBase implements AddressItemInterface {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     return array(
       'columns' => array(
-        'local' => array(
-          'type' => 'varchar',
-          'length' => 256,
-        ),
-        'countryCode' => array(
+        'country_code' => array(
           'type' => 'varchar',
           'length' => 256,
           'not null' => TRUE,
         ),
-        'administrativeArea' => array(
+        'administrative_area' => array(
           'type' => 'varchar',
           'length' => 256,
         ),
@@ -53,23 +45,23 @@ class AddressItem extends FieldItemBase implements AddressItemInterface {
           'type' => 'varchar',
           'length' => 256,
         ),
-        'dependentLocality' => array(
+        'dependent_locality' => array(
           'type' => 'varchar',
           'length' => 256,
         ),
-        'postalCode' => array(
+        'postal_code' => array(
           'type' => 'varchar',
           'length' => 256,
         ),
-        'sortingCode' => array(
+        'sorting_code' => array(
           'type' => 'varchar',
           'length' => 256,
         ),
-        'addressLine1' => array(
+        'address_line1' => array(
           'type' => 'varchar',
           'length' => 256,
         ),
-        'addressLine2' => array(
+        'address_line2' => array(
           'type' => 'varchar',
           'length' => 256,
         ),
@@ -89,23 +81,21 @@ class AddressItem extends FieldItemBase implements AddressItemInterface {
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
-    $properties['local'] = DataDefinition::create('string')
-      ->setLabel(t('The locale'));
-    $properties['countryCode'] = DataDefinition::create('string')
+    $properties['country_code'] = DataDefinition::create('string')
       ->setLabel(t('The two-letter country code.'));
-    $properties['administrativeArea'] = DataDefinition::create('string')
+    $properties['administrative_area'] = DataDefinition::create('string')
       ->setLabel(t('The top-level administrative subdivision of the country.'));
     $properties['locality'] = DataDefinition::create('string')
       ->setLabel(t('The locality (i.e. city).'));
-    $properties['dependentLocality'] = DataDefinition::create('string')
+    $properties['dependent_locality'] = DataDefinition::create('string')
       ->setLabel(t('The dependent locality (i.e. neighbourhood).'));
-    $properties['postalCode'] = DataDefinition::create('string')
+    $properties['postal_code'] = DataDefinition::create('string')
       ->setLabel(t('The postal code.'));
-    $properties['sortingCode'] = DataDefinition::create('string')
+    $properties['sorting_code'] = DataDefinition::create('string')
       ->setLabel(t('The sorting code.'));
-    $properties['addressLine1'] = DataDefinition::create('string')
+    $properties['address_line1'] = DataDefinition::create('string')
       ->setLabel(t('The first line of the address block.'));
-    $properties['addressLine2'] = DataDefinition::create('string')
+    $properties['address_line2'] = DataDefinition::create('string')
       ->setLabel(t('The second line of the address block.'));
     $properties['organization'] = DataDefinition::create('string')
       ->setLabel(t('The organization'));
@@ -119,41 +109,174 @@ class AddressItem extends FieldItemBase implements AddressItemInterface {
    * {@inheritdoc}
    */
   public function isEmpty() {
-    $value = $this->get('countryCode')->getValue();
+    $value = $this->country_code;
     return $value === NULL || $value === '';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getAddress() {
-    $address = new Address();
-    $address->setLocale($this->get('local')->getValue());
-    $address->setCountryCode($this->get('countryCode')->getValue());
-    $address->setAdministrativeArea($this->get('administrativeArea')->getValue());
-    $address->setLocality($this->get('locality')->getValue());
-    $address->setDependentLocality($this->get('dependentLocality')->getValue());
-    $address->setPostalCode($this->get('postalCode')->getValue());
-    $address->setSortingCode($this->get('sortingCode')->getValue());
-    $address->setAddressLine1($this->get('addressLine1')->getValue());
-    $address->setAddressLine2($this->get('addressLine2')->getValue());
-    $address->setRecipient($this->get('organization')->getValue());
-    $address->setOrganization($this->get('recipient')->getValue());
-
-    return $address;
+  public function getLocale() {
+    return $this->getLangcode();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getPostal($originCountryCode, $originLocale = NULL) {
-    $dataProvider = new DataProvider();
-    $formatter = new PostalFormatter($dataProvider);
-    if (empty($originLocale)) {
-      $language = \Drupal::languageManager()->getCurrentLanguage();
-      $originLocale = $language->getId();
-    }
+  public function setLocale($locale) {
+    // Our locale comes from the parent entity, so it can't be changed here.
+    // Luckily, the setters aren't actually used by the commerceguys/addressing
+    // validator and formatter.
+    return $this;
+  }
 
-    return $formatter->format($this->getAddress(), $originCountryCode, $originLocale);
+  /**
+   * {@inheritdoc}
+   */
+  public function getCountryCode() {
+    return $this->country_code;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCountryCode($countryCode) {
+    $this->country_code = $countryCode;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdministrativeArea() {
+    return $this->administrative_area;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAdministrativeArea($administrativeArea) {
+    $this->administrative_area = $administrativeArea;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLocality() {
+    return $this->locality;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLocality($locality) {
+    $this->locality = $locality;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDependentLocality() {
+    return $this->dependent_locality;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDependentLocality($dependentLocality) {
+    $this->dependent_locality = $dependentLocality;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPostalCode() {
+    return $this->postal_code;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPostalCode($postalCode) {
+    $this->postal_code = $postalCode;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSortingCode() {
+    return $this->sorting_code;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSortingCode($sortingCode) {
+    $this->sorting_code = $sortingCode;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAddressLine1() {
+    return $this->address_line1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAddressLine1($addressLine1) {
+    $this->address_line1 = $addressLine1;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAddressLine2() {
+    return $this->address_line2;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAddressLine2($addressLine2) {
+    $this->address_line2 = $addressLine2;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOrganization() {
+    return $this->organization;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOrganization($organization) {
+    $this->organization = $organization;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRecipient() {
+    return $this->recipient;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRecipient($recipient) {
+    $this->recipient = $recipient;
+    return $this;
   }
 }

@@ -31,46 +31,45 @@ class AddressDefaultFormatter extends FormatterBase {
     $elements = array();
     foreach ($items as $delta => $item) {
       $elements[$delta]['#type'] = 'fieldset';
-      $elements[$delta]['#tite'] = $items[$delta]->local;
-      $elements[$delta]['countryCode'] = array(
+      $elements[$delta]['country_code'] = array(
         '#type' => 'item',
         '#title' => t('Country Code'),
-        '#markup' => $items[$delta]->countryCode,
+        '#markup' => $items[$delta]->country_code,
       );
-      $elements[$delta]['administrativeArea'] = array(
+      $elements[$delta]['administrative_area'] = array(
         '#type' => 'item',
         '#title' => t('Administrative Area'),
-        '#markup' => $items[$delta]->administrativeArea,
+        '#markup' => $items[$delta]->administrative_area,
       );
       $elements[$delta]['locality'] = array(
         '#type' => 'item',
         '#title' => t('Locality'),
         '#markup' => $items[$delta]->locality,
       );
-      $elements[$delta]['dependentLocality'] = array(
+      $elements[$delta]['dependent_locality'] = array(
         '#type' => 'item',
         '#title' => t('Dependant Locality'),
-        '#markup' => $items[$delta]->dependentLocality,
+        '#markup' => $items[$delta]->dependent_locality,
       );
-      $elements[$delta]['postalCode'] = array(
+      $elements[$delta]['postal_code'] = array(
         '#type' => 'item',
         '#title' => t('Postal Code'),
-        '#markup' => $items[$delta]->postalCode,
+        '#markup' => $items[$delta]->postal_code,
       );
-      $elements[$delta]['sortingCode'] = array(
+      $elements[$delta]['sorting_code'] = array(
         '#type' => 'item',
         '#title' => t('Sorting Code'),
-        '#markup' => $items[$delta]->sortingCode,
+        '#markup' => $items[$delta]->sorting_code,
       );
-      $elements[$delta]['addressLine1'] = array(
+      $elements[$delta]['address_line1'] = array(
         '#type' => 'item',
         '#title' => t('Address Line 1'),
-        '#markup' => $items[$delta]->addressLine1,
+        '#markup' => $items[$delta]->address_line1,
       );
-      $elements[$delta]['addressLine2'] = array(
+      $elements[$delta]['address_line2'] = array(
         '#type' => 'item',
         '#title' => t('Address Line 2'),
-        '#markup' => $items[$delta]->addressLine2,
+        '#markup' => $items[$delta]->address_line2,
       );
       $elements[$delta]['organization'] = array(
         '#type' => 'item',
