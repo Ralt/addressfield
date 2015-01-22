@@ -16,14 +16,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AddressFormatForm extends EntityForm {
 
   /**
-   * The currency storage.
+   * The address format storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $addressFormatStorage;
 
   /**
-   * Creates a AddressFormatForm instance.
+   * Creates an AddressFormatForm instance.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $address_format_storage
    *   The address format storage.
@@ -56,82 +56,67 @@ class AddressFormatForm extends EntityForm {
       '#required' => TRUE,
       '#options' => CountryManager::getStandardList(),
     );
-
     $form['format'] = array(
       '#type' => 'textarea',
       '#title' => $this->t('Format'),
-      '#description' => $this->t('Write how the format of the address should be, available tokens: @tokens', array('@tokens' => implode(', ', $address_format->getFieldsTokens()))),
+      '#description' => $this->t('Available tokens: @tokens', array('@tokens' => implode(', ', $address_format->getFieldsTokens()))),
       '#default_value' => $address_format->getFormat(),
       '#required' => TRUE,
     );
-
     $form['requiredFields'] = array(
-      '#type' => 'select',
+      '#type' => 'checkboxes',
       '#title' => t('Required fields'),
-      '#multiple' => TRUE,
-      '#description' => t('Select which fields should be required.'),
       '#options' => $address_format->getFields(),
       '#default_value' => $address_format->getRequiredFields(),
     );
-
     $form['uppercaseFields'] = array(
-      '#type' => 'select',
+      '#type' => 'checkboxes',
       '#title' => t('Uppercase fields'),
-      '#multiple' => TRUE,
       '#description' => t('Select which fields needs to be uppercased for automatic post handling.'),
       '#options' => $address_format->getFields(),
       '#default_value' => $address_format->getUppercaseFields(),
     );
-
-    $form['administrativeAreaType'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Administrative area type'),
-      '#description' => $this->t('Used for presenting the correct label to the end-user.'),
-      '#default_value' => $address_format->getAdministrativeAreaType(),
-      '#options' => $address_format->getAdministrativeAreaTypes(),
-      '#required' => TRUE,
-    );
-
-    $form['localityType'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Locality type'),
-      '#description' => $this->t('Used for presenting the correct label to the end-user.'),
-      '#default_value' => $address_format->getLocalityType(),
-      '#options' => $address_format->getLocalityTypes(),
-      '#required' => TRUE,
-    );
-
-    $form['dependentLocalityType'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Dependent locality type'),
-      '#description' => $this->t('Used for presenting the correct label to the end-user.'),
-      '#default_value' => $address_format->getDependentLocalityType(),
-      '#options' => $address_format->getDependentLocalityTypes(),
-      '#required' => TRUE,
-    );
-
-    $form['postalCodeType'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Dependent locality type'),
-      '#description' => $this->t('Used for presenting the correct label to the end-user.'),
-      '#default_value' => $address_format->getpostalCodeType(),
-      '#options' => $address_format->getPostalCodeTypes(),
-      '#required' => TRUE,
-    );
-
     $form['postalCodePattern'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Postal code pattern'),
-      '#description' => $this->t('Defines the postal code pattern that all postal codes must uphold.'),
+      '#description' => $this->t('Regular expression used to validate postal codes.'),
       '#default_value' => $address_format->getPostalCodePattern(),
     );
-
     $form['postalCodePrefix'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Postal code prefix'),
       '#description' => $this->t('Defines the postal prefix which is added to all postal codes.'),
       '#default_value' => $address_format->getPostalCodePrefix(),
       '#size' => 5,
+    );
+
+    $form['postalCodeType'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Postal code type'),
+      '#default_value' => $address_format->getPostalCodeType(),
+      '#options' => $address_format->getPostalCodeTypes(),
+      '#empty_value' => '',
+    );
+    $form['dependentLocalityType'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Dependent locality type'),
+      '#default_value' => $address_format->getDependentLocalityType(),
+      '#options' => $address_format->getDependentLocalityTypes(),
+      '#empty_value' => '',
+    );
+    $form['localityType'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Locality type'),
+      '#default_value' => $address_format->getLocalityType(),
+      '#options' => $address_format->getLocalityTypes(),
+      '#empty_value' => '',
+    );
+    $form['administrativeAreaType'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Administrative area type'),
+      '#default_value' => $address_format->getAdministrativeAreaType(),
+      '#options' => $address_format->getAdministrativeAreaTypes(),
+      '#empty_value' => '',
     );
 
     return $form;

@@ -59,14 +59,14 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    *
    * @var array
    */
-  protected $requiredFields;
+  protected $requiredFields = [];
 
   /**
    * The fields that need to be uppercased.
    *
    * @var array
    */
-  protected $uppercaseFields;
+  protected $uppercaseFields = [];
 
   /**
    * The administrative area type.
@@ -153,14 +153,15 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function getFields() {
     return array(
-      AddressFormat::FIELD_ADMINISTRATIVE_AREA => t('Administrative area'),
-      AddressFormat::FIELD_LOCALITY => t('Locality'),
-      AddressFormat::FIELD_DEPENDENT_LOCALITY => t('Dependent locality'),
-      AddressFormat::FIELD_POSTAL_CODE => t('Postal code'),
-      AddressFormat::FIELD_SORTING_CODE => t('Sorting code'),
-      AddressFormat::FIELD_ADDRESS => t('Address'),
-      AddressFormat::FIELD_ORGANIZATION => t('Organization'),
       AddressFormat::FIELD_RECIPIENT => t('Recipient'),
+      AddressFormat::FIELD_ORGANIZATION => t('Organization'),
+      AddressFormat::FIELD_ADDRESS => t('Address'),
+      AddressFormat::FIELD_SORTING_CODE => t('Sorting code'),
+      AddressFormat::FIELD_POSTAL_CODE => t('Postal code'),
+      AddressFormat::FIELD_DEPENDENT_LOCALITY => t('Dependent locality'),
+      AddressFormat::FIELD_LOCALITY => t('Locality'),
+      AddressFormat::FIELD_ADMINISTRATIVE_AREA => t('Administrative area'),
+
     );
   }
 
@@ -222,7 +223,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setCountryCode($countryCode) {
     $this->countryCode = $countryCode;
-
     return $this;
   }
 
@@ -238,7 +238,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setFormat($format) {
     $this->format = $format;
-
     return $this;
   }
 
@@ -254,7 +253,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setRequiredFields(array $requiredFields) {
     $this->requiredFields = $requiredFields;
-
     return $this;
   }
 
@@ -270,7 +268,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setUppercaseFields(array $uppercaseFields) {
     $this->uppercaseFields = $uppercaseFields;
-
     return $this;
   }
 
@@ -286,7 +283,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setAdministrativeAreaType($administrativeAreaType) {
     $this->administrativeAreaType = $administrativeAreaType;
-
     return $this;
   }
 
@@ -302,7 +298,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setLocalityType($localityType) {
     $this->localityType = $localityType;
-
     return $this;
   }
 
@@ -318,7 +313,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setDependentLocalityType($dependentLocalityType) {
     $this->dependentLocalityType = $dependentLocalityType;
-
     return $this;
   }
 
@@ -334,7 +328,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setPostalCodeType($postalCodeType) {
     $this->postalCodeType = $postalCodeType;
-
     return $this;
   }
 
@@ -350,7 +343,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setPostalCodePattern($postalCodePattern) {
     $this->postalCodePattern = $postalCodePattern;
-
     return $this;
   }
 
@@ -366,7 +358,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setPostalCodePrefix($postalCodePrefix) {
     $this->postalCodePrefix = $postalCodePrefix;
-
     return $this;
   }
 
@@ -386,7 +377,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setLocale($locale) {
     $this->locale = $locale;
-
     return $this;
   }
 

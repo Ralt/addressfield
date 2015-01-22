@@ -12,7 +12,7 @@ entity.address_format.add_form:
   path: '/admin/config/regional/address-format/add'
   defaults:
     _entity_form: 'address_format.add'
-    _title: 'Add a new currency'
+    _title: 'Add a new address format'
   options:
     _admin_route: TRUE
   requirements:

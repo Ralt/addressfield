@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Builds the form to delete a currency.
+ * Builds the form to delete an address format.
  */
 class AddressFormatFormDeleteForm extends EntityConfirmFormBase {
 

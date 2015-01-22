@@ -34,44 +34,43 @@ class AddressItem extends FieldItemBase implements AddressInterface {
       'columns' => array(
         'country_code' => array(
           'type' => 'varchar',
-          'length' => 256,
-          'not null' => TRUE,
+          'length' => 2,
         ),
         'administrative_area' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'locality' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'dependent_locality' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'postal_code' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'sorting_code' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'address_line1' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'address_line2' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'organization' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
         'recipient' => array(
           'type' => 'varchar',
-          'length' => 256,
+          'length' => 255,
         ),
       ),
     );
