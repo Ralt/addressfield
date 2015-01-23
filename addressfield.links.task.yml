@@ -1,19 +1,14 @@
-entity.address_format.list:
-  route_name: 'entity.address_format.list'
-  base_route: 'entity.address_format.list'
+entity.address_format.collection:
+  route_name: 'entity.address_format.collection'
+  base_route: 'entity.address_format.collection'
   title: 'List'
 
 entity.address_format.import:
   route_name: 'entity.address_format.import'
-  base_route: 'entity.address_format.list'
+  base_route: 'entity.address_format.collection'
   title: 'Import'
 
-entity.subdivision.list:
-  route_name: 'entity.subdivision.list'
-  base_route: 'entity.subdivision.list'
+entity.subdivision.collection:
+  route_name: 'entity.subdivision.collection'
+  base_route: 'entity.subdivision.collection'
   title: 'List'
-
-entity.subdivision.import:
-  route_name: 'entity.subdivision.import'
-  base_route: 'entity.subdivision.list'
-  title: 'Import'

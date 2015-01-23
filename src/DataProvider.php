@@ -81,14 +81,10 @@ class DataProvider implements DataProviderInterface
   /**
    * {@inheritdoc}
    */
-  public function getSubdivisions($countryCode, $parentId = 0, $locale = null) {
-    if ($parentId === 0) {
-      $format = $this->getAddressFormat($countryCode);
-      return $format->getSubdivisions();
-    }
-    else {
-      $parent = $this->getSubdivision($parentId);
-      return $parent->getChildren();
-    }
+  public function getSubdivisions($countryCode, $parentId = null, $locale = null) {
+    return $this->entityManager->getStorage('subdivision')->loadByProperties(array(
+      'countryCode' => $countryCode,
+      'parentId' => $parentId,
+    ));
   }
 }

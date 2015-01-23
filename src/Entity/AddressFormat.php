@@ -7,7 +7,8 @@
 
 namespace Drupal\addressfield\Entity;
 
-use CommerceGuys\Addressing\Model\AddressFormatInterface;
+use CommerceGuys\Addressing\Model\SubdivisionInterface;
+use Drupal\addressfield\AddressFormatInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 
 /**
@@ -20,7 +21,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "form" = {
  *       "add" = "Drupal\addressfield\Form\AddressFormatForm",
  *       "edit" = "Drupal\addressfield\Form\AddressFormatForm",
- *       "delete" = "Drupal\addressfield\Form\AddressFormatFormDeleteForm"
+ *       "delete" = "Drupal\addressfield\Form\AddressFormatDeleteForm"
  *     },
  *     "list_builder" = "Drupal\addressfield\AddressFormatListBuilder",
  *   },
@@ -30,11 +31,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "id" = "countryCode",
  *     "label" = "countryCode",
  *     "uuid" = "uuid",
- *     "status" = "status"
  *   },
  *   links = {
- *     "edit-form" = "entity.address_format.edit_form",
- *     "delete-form" = "entity.address_format.delete_form"
+ *     "collection" = "/admin/config/regional/address-formats",
+ *     "edit-form" = "/admin/config/regional/address-formats/manage/{address_format}",
+ *     "delete-form" = "/admin/config/regional/address-formats/manage/{address_format}/delete"
  *   }
  * )
  */
@@ -109,6 +110,20 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    * @var string
    */
   protected $postalCodePrefix;
+
+  /**
+   * The subdivision ids.
+   *
+   * @var array
+   */
+  protected $subdivisionIds = [];
+
+  /**
+   * The subdivision entities.
+   *
+   * @var \CommerceGuys\Addressing\Model\SubdivisionInterface[]
+   */
+  protected $subdivisions = [];
 
   /**
    * Get the list of administrative area types defined by the AddressFormatInterface.
@@ -223,6 +238,7 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    */
   public function setCountryCode($countryCode) {
     $this->countryCode = $countryCode;
+
     return $this;
   }
 
@@ -362,22 +378,61 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
   }
 
   /**
-   * Gets the locale.
-   *
-   * @return string The locale.
+   * {@inheritdoc}
    */
-  public function getLocale() {
-    return $this->locale;
+  public function getSubdivisions() {
+    if (empty($this->subdivisions) && !empty($this->subdivisionIds)) {
+      $this->subdivisions = Subdivision::loadMultiple($this->subdivisionIds);
+    }
+
+    return $this->subdivisions;
   }
 
   /**
-   * Sets the locale.
-   *
-   * @param string $locale The locale.
+   * {@inheritdoc}
    */
-  public function setLocale($locale) {
-    $this->locale = $locale;
+  public function setSubdivisions($subdivisions) {
+    $this->subdivisions = $subdivisions;
+    $this->subdivisionIds = '';
+
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasSubdivisions() {
+    return !empty($this->subdivisionIds);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addSubdivision(SubdivisionInterface $subdivision) {
+    if (!$this->hasSubdivision($subdivision)) {
+      $this->subdivisionIds[] = $subdivision->id();
+      $this->subdivisions = NULL;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeSubdivision(SubdivisionInterface $subdivision) {
+    if ($this->hasSubdivision($subdivision)) {
+      // Remove the subdivision and rekey the array.
+      $index = array_search($subdivision->id(), $this->subdivisionIds);
+      unset($this->subdivisionIds[$index]);
+      $this->subdivisionIds = array_values($this->subdivisions);
+      $this->subdivisions = NULL;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasSubdivision(SubdivisionInterface $subdivision) {
+    return in_array($subdivision->id(), $this->subdivisionIds);
   }
 
 }

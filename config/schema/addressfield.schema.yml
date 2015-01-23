@@ -1,27 +1,3 @@
-addressfield.subdivision.*:
-  type: config_entity
-  label: 'Subdivision'
-  mapping:
-    id:
-      type: string
-      label: 'ID'
-    name:
-      type: label
-      label: 'Name'
-      translatable: true
-    code:
-      type: string
-      label: 'Code'
-    parentId:
-      type: string
-      label: 'Parent ID'
-    countryCode:
-      type: string
-      label: 'Country code'
-    status:
-      label: Status
-      type: boolean
-
 addressfield.address_format.*:
   type: config_entity
   label: 'Address format'
@@ -33,11 +9,15 @@ addressfield.address_format.*:
       type: string
       label: 'Format'
     requiredFields:
-      type: array
+      type: sequence
       label: 'Required fields'
+      sequence:
+        - type: string
     uppercaseFields:
-      type: array
+      type: sequence
       label: 'Uppercase Fields'
+      sequence:
+        - type: string
     administrativeAreaType:
       type: string
       label: 'Administrative area type'
@@ -56,6 +36,34 @@ addressfield.address_format.*:
     postalCodePrefix:
       type: string
       label: 'Postal code prefix'
-    status:
-      label: Status
-      type: boolean
+    subdivisionIds:
+      type: sequence
+      label: 'Subdivision ids'
+      sequence:
+        - type: string
+
+addressfield.subdivision.*:
+  type: config_entity
+  label: 'Subdivision'
+  mapping:
+    countryCode:
+      type: string
+      label: 'Country code'
+    parentId:
+      type: string
+      label: 'Parent ID'
+    id:
+      type: string
+      label: 'ID'
+    code:
+      type: string
+      label: 'Code'
+    name:
+      type: label
+      label: 'Name'
+      translatable: true
+    childrenIds:
+      type: sequence
+      label: 'Children ids'
+      sequence:
+        - type: string

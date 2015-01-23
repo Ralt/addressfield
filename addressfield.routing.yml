@@ -1,106 +1,85 @@
-entity.address_format.list:
-  path: '/admin/config/regional/address-format'
+entity.address_format.collection:
+  path: '/admin/config/regional/address-formats'
   defaults:
     _entity_list: 'address_format'
     _title: 'Address formats'
-  options:
-    _admin_route: TRUE
   requirements:
     _permission: 'administer address formats'
 
-entity.address_format.add_form:
-  path: '/admin/config/regional/address-format/add'
-  defaults:
-    _entity_form: 'address_format.add'
-    _title: 'Add a new address format'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_create_access: 'address_format'
-
 entity.address_format.import:
-  path: '/admin/config/regional/address-format/import'
+  path: '/admin/config/regional/address-formats/import'
   defaults:
     _form: '\Drupal\addressfield\Form\AddressFormatImporterForm'
     _title: 'Import an address format'
   requirements:
     _permission: 'administer address formats'
 
+entity.address_format.add_form:
+  path: '/admin/config/regional/address-formats/add'
+  defaults:
+    _entity_form: 'address_format.add'
+    _title: 'Add a new address format'
+  requirements:
+    _entity_create_access: 'address_format'
+
 entity.address_format.edit_form:
-  path: '/admin/config/regional/address-format/{address_format}'
+  path: '/admin/config/regional/address-formats/manage/{address_format}'
   defaults:
     _entity_form: 'address_format.edit'
     _title: 'Edit an address format'
-  options:
-    _admin_route: TRUE
   requirements:
-    _permission: 'administer address formats'
+    _entity_access: 'address_format.update'
 
 entity.address_format.delete_form:
-  path: '/admin/config/regional/address-format/{address_format}/delete'
+  path: '/admin/config/regional/address-formats/manage/{address_format}/delete'
   defaults:
     _entity_form: 'address_format.delete'
     _title: 'Delete an address format'
-  options:
-    _admin_route: TRUE
   requirements:
-    _permission: 'administer address formats'
+    _entity_access: 'address_format.delete'
 
-entity.subdivision.list:
-  path: '/admin/config/regional/subdivision'
+entity.subdivision.collection:
+  path: '/admin/config/regional/subdivisions/{address_format}/{parent}'
   defaults:
-    _entity_list: 'subdivision'
+    parent: null
+    _controller: '\Drupal\addressfield\Controller\SubdivisionController::buildList'
     _title: 'Subdivisions'
   options:
-    _admin_route: TRUE
+    parameters:
+      address_format:
+        type: entity:address_format
+      parent:
+        type: entity:subdivision
   requirements:
     _permission: 'administer subdivisions'
 
 entity.subdivision.add_form:
-  path: '/admin/config/regional/subdivision/add'
+  path: '/admin/config/regional/subdivisions/add/{address_format}/{parent}'
   defaults:
-    _entity_form: 'subdivision.add'
+    parent: null
+    _controller: '\Drupal\addressfield\Controller\SubdivisionController::addForm'
     _title: 'Add a new subdivision'
   options:
-    _admin_route: TRUE
+    parameters:
+      address_format:
+        type: entity:address_format
+      parent:
+        type: entity:subdivision
   requirements:
     _entity_create_access: 'subdivision'
 
-entity.subdivision.import:
-  path: '/admin/config/regional/subdivision/import'
-  defaults:
-    _form: '\Drupal\addressfield\Form\SubdivisionImporterForm'
-    _title: 'Import a subdivision'
-  requirements:
-    _permission: 'administer subdivisions'
-
 entity.subdivision.edit_form:
-  path: '/admin/config/regional/subdivision/{subdivision}'
+  path: '/admin/config/regional/subdivisions/manage/{subdivision}'
   defaults:
     _entity_form: 'subdivision.edit'
     _title: 'Edit a subdivision'
-  options:
-    _admin_route: TRUE
   requirements:
-    _permission: 'administer subdivisions'
+    _entity_access: 'subdivision.update'
 
 entity.subdivision.delete_form:
-  path: '/admin/config/regional/subdivision/{subdivision}/delete'
+  path: '/admin/config/regional/subdivisions/manage/{subdivision}/delete'
   defaults:
     _entity_form: 'subdivision.delete'
     _title: 'Delete a subdivision'
-  options:
-    _admin_route: TRUE
   requirements:
-    _permission: 'administer subdivisions'
-
-entity.subdivision.devel:
-  path: '/admin/config/regional/subdivision/{subdivision}/devel'
-  defaults:
-    _content: '\Drupal\addressfield\Controller\CommerceCurrencyDevelController::currencyLoad'
-    _title: 'Dump a subdivision'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _module_dependencies: 'devel'
-    _permission: 'access devel information'
+    _entity_access: 'subdivision.delete'

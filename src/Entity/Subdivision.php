@@ -8,10 +8,9 @@
 namespace Drupal\addressfield\Entity;
 
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
-use CommerceGuys\Addressing\Provider\DataProvider;
-use CommerceGuys\Addressing\Provider\DataProviderInterface;
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\Annotation\ConfigEntityType;
 
 /**
@@ -21,11 +20,12 @@ use Drupal\Core\Entity\Annotation\ConfigEntityType;
  *   id = "subdivision",
  *   label = @Translation("Subdivision"),
  *   handlers = {
+ *     "storage" = "Drupal\addressfield\SubdivisionStorage",
  *     "list_builder" = "Drupal\addressfield\SubdivisionListBuilder",
  *     "form" = {
  *       "add" = "Drupal\addressfield\Form\SubdivisionForm",
  *       "edit" = "Drupal\addressfield\Form\SubdivisionForm",
- *       "delete" = "Drupal\addressfield\Form\SubdivisionFormDeleteForm"
+ *       "delete" = "Drupal\Core\Entity\EntityDeleteForm"
  *     }
  *   },
  *   admin_permission = "administer subdivisions",
@@ -34,22 +34,15 @@ use Drupal\Core\Entity\Annotation\ConfigEntityType;
  *     "id" = "id",
  *     "label" = "name",
  *     "uuid" = "uuid",
- *     "status" = "status"
  *   },
  *   links = {
- *     "edit-form" = "entity.subdivision.edit_form",
- *     "delete-form" = "entity.subdivision.delete_form"
+ *     "collection" = "/admin/config/regional/subdivisions/{address_format}/{parent}",
+ *     "edit-form" = "/admin/config/regional/subdivisions/manage/{subdivision}",
+ *     "delete-form" = "/admin/config/regional/subdivisions/manage/{subdivision}/delete"
  *   }
  * )
  */
 class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
-
-  /**
-   * The parent.
-   *
-   * @var SubdivisionInterface
-   */
-  protected $parent;
 
   /**
    * The country code.
@@ -57,6 +50,20 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    * @var string
    */
   protected $countryCode;
+
+  /**
+   * The parent id.
+   *
+   * @var string
+   */
+  protected $parentId;
+
+  /**
+   * The parent entity.
+   *
+   * @var \CommerceGuys\Addressing\Model\SubdivisionInterface
+   */
+  protected $parent;
 
   /**
    * The subdivision id.
@@ -87,47 +94,18 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   protected $postalCodePattern;
 
   /**
-   * The children.
+   * The children ids.
    *
-   * @param SubdivisionInterface []
+   * @var array
+   */
+  protected $childrenIds = [];
+
+  /**
+   * The children entities.
+   *
+   * @var \CommerceGuys\Addressing\Model\SubdivisionInterface[]
    */
   protected $children = [];
-
-  /**
-   * The locale.
-   *
-   * @var string
-   */
-  protected $locale;
-
-  /**
-   * The data provider.
-   *
-   * @var DataProviderInterface
-   */
-  protected static $dataProvider;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getParent() {
-    if (!$this->parent->getCode()) {
-      // The parent object is incomplete. Load the full one.
-      $dataProvider = $this->getDataProvider();
-      $this->parent = $dataProvider->getSubdivision($this->parent->getId());
-    }
-
-    return $this->parent;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setParent(SubdivisionInterface $parent = NULL) {
-    $this->parent = $parent;
-
-    return $this;
-  }
 
   /**
    * {@inheritdoc}
@@ -141,6 +119,31 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setCountryCode($countryCode) {
     $this->countryCode = $countryCode;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getParent() {
+    if (empty($this->parentId)) {
+      return NULL;
+    }
+    if (empty($this->parent)) {
+      $this->parent = self::load($this->parentId);
+    }
+
+    return $this->parent;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setParent(SubdivisionInterface $parent = NULL) {
+    $this->parent = $parent;
+    $this->parentId = $parent ? $parent->getId() : NULL;
+
     return $this;
   }
 
@@ -156,6 +159,7 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setId($id) {
     $this->id = $id;
+
     return $this;
   }
 
@@ -171,6 +175,7 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setCode($code) {
     $this->code = $code;
+
     return $this;
   }
 
@@ -186,6 +191,7 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setName($name) {
     $this->name = $name;
+
     return $this;
   }
 
@@ -201,18 +207,23 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setPostalCodePattern($postalCodePattern) {
     $this->postalCodePattern = $postalCodePattern;
+
     return $this;
   }
 
   /**
    * {@inheritdoc}
    */
+  public function getChildrenIds() {
+    return $this->childrenIds;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getChildren() {
-    // When a subdivision has children the data provider sets $children
-    // to array('load'), to indicate that they should be lazy loaded.
-    if (!isset($this->children) || $this->children === array('load')) {
-      $dataProvider = self::getDataProvider();
-      $this->children = $dataProvider->getSubdivisions($this->countryCode, $this->id, $this->locale);
+    if (empty($this->children) && !empty($this->childrenIds)) {
+      $this->children = self::loadMultiple($this->childrenIds);
     }
 
     return $this->children;
@@ -223,13 +234,16 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setChildren($children) {
     $this->children = $children;
+    $this->childrenIds = $this->recalculateChildrenIds($children);
+
+    return $this;
   }
 
   /**
    * {@inheritdoc}
    */
   public function hasChildren() {
-    return !empty($this->children);
+    return !empty($this->childrenIds);
   }
 
   /**
@@ -237,8 +251,8 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function addChild(SubdivisionInterface $child) {
     if (!$this->hasChild($child)) {
-      $child->setParent($this);
-      $this->children->add($child);
+      $this->childrenIds[] = $child->id();
+      $this->children = NULL;
     }
 
     return $this;
@@ -249,8 +263,11 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function removeChild(SubdivisionInterface $child) {
     if ($this->hasChild($child)) {
-      $child->setParent(NULL);
-      $this->children->removeElement($child);
+      // Remove the child and rekey the array.
+      $index = array_search($child, $this->childrenIds);
+      unset($this->childrenIds[$index]);
+      $this->childrenIds = array_values($this->childrenIds);
+      $this->children = NULL;
     }
 
     return $this;
@@ -260,48 +277,99 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    * {@inheritdoc}
    */
   public function hasChild(SubdivisionInterface $child) {
-    return $this->children->contains($child);
+    return in_array($child->id(), $this->childrenIds);
   }
 
   /**
-   * Gets the locale.
-   *
-   * @return string The locale.
+   * {@inheritdoc}
    */
-  public function getLocale() {
-    return $this->locale;
-  }
+  public function calculateDependencies() {
+    parent::calculateDependencies();
 
-  /**
-   * Sets the locale.
-   *
-   * @param string $locale The locale.
-   * @return $this
-   */
-  public function setLocale($locale) {
-    $this->locale = $locale;
-    return $this;
-  }
-
-  /**
-   * Gets the data provider.
-   *
-   * @return DataProviderInterface The data provider.
-   */
-  public static function getDataProvider() {
-    if (!isset(self::$dataProvider)) {
-      self::setDataProvider(new DataProvider());
+    // Depend on the parent entity. That is either another subdivision,
+    // or the address format (for top level subdivisions).
+    $parent = $this->getParent();
+    if ($parent) {
+      $this->addDependency('config', $parent->getConfigDependencyName());
+    }
+    else {
+      $format = AddressFormat::load($this->countryCode);
+      $this->addDependency('config', $format->getConfigDependencyName());
     }
 
-    return self::$dataProvider;
+    return $this->dependencies;
   }
 
   /**
-   * Sets the data Subdivision provider.
-   * @param \CommerceGuys\Addressing\Provider\DataProviderInterface $dataProvider
+   * {@inheritdoc}
    */
-  public static function setDataProvider(DataProviderInterface $dataProvider) {
-    self::$dataProvider = $dataProvider;
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+
+    if ($this->isSyncing()) {
+      // Imported configuration already has the correct relationships.
+      return;
+    }
+
+    if (!$update) {
+      // Add the new subdivision to the parent entity. That is either another
+      // subdivision, or the address format (for top level subdivisions).
+      $parent = $this->getParent();
+      if ($parent) {
+        $parent->addChild($this);
+        $parent->save();
+      }
+      else {
+        $format = AddressFormat::load($this->countryCode);
+        $format->addSubdivision($this);
+        $format->save();
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+
+    foreach ($entities as $entity) {
+      if ($entity->isSyncing()) {
+        // Imported configuration already has the correct relationships.
+        return;
+      }
+
+      // Remove the deleted subdivisions from parent entities. Those are either
+      // other subdivisions, or address formats (for top level subdivisions).
+      $parent = $entity->getParent();
+      if ($parent) {
+        $parent->removeChild($entity);
+        $parent->save();
+      }
+      else {
+        $format = AddressFormat::load($entity->getCountryCode());
+        if ($format) {
+          $format->removeSubdivision($entity);
+          $format->save();
+        }
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function urlRouteParameters($rel) {
+    $parameters = [];
+    if ($rel == 'collection') {
+      $parameters['address_format'] = $this->countryCode;
+      $parameters['parent'] = $this->parentId;
+    }
+    else {
+      $parameters['subdivision'] = $this->id;
+    }
+
+    return $parameters;
   }
 
 }

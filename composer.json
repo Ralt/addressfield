@@ -5,7 +5,6 @@
   "homepage": "http://drupal.org/project/addressfield",
   "license": "GPL-2.0+",
   "require": {
-    "commerceguys/intl": "dev-master",
     "commerceguys/addressing": "dev-master"
   }
 }

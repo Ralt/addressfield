@@ -2,20 +2,6 @@
 
 /**
  * @file
- * Defines the core addressfield entity type.
+ * Provides functionality for handling postal addresses.
  */
-use Drupal\Core\Entity\EntityInterface;
 
-/**
- * Implements hook_entity_operation().
- *
- * Add devel link if this entity type is /addressfield[_type]/.
- * @param \Drupal\Core\Entity\EntityInterface $entity
- * @return array
- */
-function addressfield_entity_operation(EntityInterface $entity) {
-  $operations = array();
-  if (!\Drupal::moduleHandler()->moduleExists('devel')) {
-    return $operations;
-  }
-}

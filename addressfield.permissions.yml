@@ -1,20 +1,5 @@
-'administer addressfields':
-  title: 'Administer addressfields'
-  description: 'Allows users to create, update, and delete addressfields.'
-  'restrict access': TRUE
-
-'administer addressfield types':
-  title: 'Administer addressfield types'
-  description: 'Allows users to create, update, and delete addressfield types.'
-  'restrict access': TRUE
-
 'administer address formats':
-  title: 'Administer Address Formats'
-  description: 'Allows users to create, update, and delete Address Format entities.'
-  'restrict access': TRUE
-
-'administer subdivisions':
-  title: 'Administer Subdivisions'
-  description: 'Allows users to create, update, and delete Subdivisions entities.'
+  title: 'Administer address formats'
+  description: 'Allows users to create, update, and delete address format entities.'
   'restrict access': TRUE
 

@@ -10,7 +10,7 @@ namespace Drupal\addressfield\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Locale\CountryManager;
+use Drupal\Core\Locale\CountryManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AddressFormatForm extends EntityForm {
@@ -20,16 +20,24 @@ class AddressFormatForm extends EntityForm {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $addressFormatStorage;
+  protected $storage;
+
+  /**
+   * The country manager.
+   *
+   * @var \Drupal\Core\Locale\CountryManagerInterface
+   */
+  protected $countryManager;
 
   /**
    * Creates an AddressFormatForm instance.
    *
-   * @param \Drupal\Core\Entity\EntityStorageInterface $address_format_storage
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The address format storage.
    */
-  public function __construct(EntityStorageInterface $address_format_storage) {
-    $this->addressFormatStorage = $address_format_storage;
+  public function __construct(EntityStorageInterface $storage, CountryManagerInterface $country_manager) {
+    $this->storage = $storage;
+    $this->countryManager = $country_manager;
   }
 
   /**
@@ -39,7 +47,7 @@ class AddressFormatForm extends EntityForm {
     /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
     $entity_manager = $container->get('entity.manager');
 
-    return new static($entity_manager->getStorage('address_format'));
+    return new static($entity_manager->getStorage('address_format'), $container->get('country_manager'));
   }
 
   /**
@@ -49,13 +57,25 @@ class AddressFormatForm extends EntityForm {
     $form = parent::form($form, $form_state);
     $address_format = $this->entity;
 
-    $form['countryCode'] = array(
-      '#type' => 'select',
-      '#title' => $this->t('Country code'),
-      '#default_value' => $address_format->getCountryCode(),
-      '#required' => TRUE,
-      '#options' => CountryManager::getStandardList(),
-    );
+    $country_code = $address_format->getCountryCode();
+    if ($country_code == 'ZZ') {
+      $form['countryCode'] = array(
+        '#type' => 'item',
+        '#title' => $this->t('Country'),
+        '#markup' => $this->t('Generic'),
+      );
+    }
+    else {
+      $form['countryCode'] = array(
+        '#type' => 'select',
+        '#title' => $this->t('Country'),
+        '#default_value' => $address_format->getCountryCode(),
+        '#required' => TRUE,
+        '#options' => $this->countryManager->getList(),
+        '#disabled' => !$address_format->isNew(),
+      );
+    }
+
     $form['format'] = array(
       '#type' => 'textarea',
       '#title' => $this->t('Format'),
@@ -72,7 +92,7 @@ class AddressFormatForm extends EntityForm {
     $form['uppercaseFields'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Uppercase fields'),
-      '#description' => t('Select which fields needs to be uppercased for automatic post handling.'),
+      '#description' => t('Uppercased on envelopes to faciliate automatic post handling.'),
       '#options' => $address_format->getFields(),
       '#default_value' => $address_format->getUppercaseFields(),
     );
@@ -85,7 +105,7 @@ class AddressFormatForm extends EntityForm {
     $form['postalCodePrefix'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Postal code prefix'),
-      '#description' => $this->t('Defines the postal prefix which is added to all postal codes.'),
+      '#description' => $this->t('Added to postal codes during formatting.'),
       '#default_value' => $address_format->getPostalCodePrefix(),
       '#size' => 5,
     );
@@ -125,21 +145,43 @@ class AddressFormatForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  public function validate(array $form, FormStateInterface $form_state) {
+    parent::validate($form, $form_state);
+
+    // Disallow adding an address format for a country that already has one.
+    if ($this->entity->isNew()) {
+      $country = $form_state->getValue('countryCode');
+      if ($this->storage->load($country)) {
+        $form_state->setErrorByName('countryCode', $this->t('The selected country already has an address format.'));
+      }
+    }
+
+    // Require the matching type field for the fields specified in the format.
+    $format = $form_state->getValue('format');
+    $requirements = array(
+      '%postal_code' => 'postalCodeType',
+      '%dependent_locality' => 'dependentLocalityType',
+      '%locality' => 'localityType',
+      '%administrative_area' => 'administrativeAreaType',
+    );
+    foreach ($requirements as $token => $required_field) {
+      if (strpos($format, $token) !== FALSE && !$form_state->getValue($required_field)) {
+        $title = $form[$required_field]['#title'];
+        $form_state->setErrorByName($required_field, $this->t('%title is required.', array('%title' => $title)));
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state) {
     $address_format = $this->entity;
-
-    try {
-      $address_format->save();
-      drupal_set_message($this->t('Saved the %label address format.', array(
-        '%label' => $address_format->label(),
-      )));
-      $form_state->setRedirect('entity.address_format.list');
-    }
-    catch (\Exception $e) {
-      drupal_set_message($this->t('The %label address_format was not saved.', array('%label' => $address_format->label())), 'error');
-      $this->logger('addressfield')->error($e);
-      $form_state->setRebuild();
-    }
+    $address_format->save();
+    drupal_set_message($this->t('Saved the %label address format.', array(
+      '%label' => $address_format->label(),
+    )));
+    $form_state->setRedirectUrl($address_format->urlInfo('collection'));
   }
 
 }
