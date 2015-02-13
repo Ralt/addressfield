@@ -17,26 +17,26 @@ interface SubdivisionRecordStorageInterface {
    *
    * @param array $ids
    *   An array of requested IDs.
-   * @param bool $overide_free
+   * @param bool $overrideFree
    *   Whether the underlying configuration should be retrieved override free.
    *
    * @return array
    *   An array of loaded records.
    */
-  public function loadMultiple(array $ids, $override_free = FALSE);
+  public function loadMultiple(array $ids, $overrideFree = FALSE);
 
   /**
    * Loads all storage records under the provided parent IDs.
    *
-   * @param array $parent_ids
+   * @param array $parentIds
    *   An array of parent IDs.
-   * @param bool $overide_free
+   * @param bool $overrideFree
    *   Whether the underlying configuration should be retrieved override free.
    *
    * @return array
    *   An array of loaded records.
    */
-  public function loadChildren(array $parent_ids, $override_free = FALSE);
+  public function loadChildren(array $parentIds, $overrideFree = FALSE);
 
   /**
    * Determines if a record already exists in storage.

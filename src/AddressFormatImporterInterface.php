@@ -23,11 +23,11 @@ interface AddressFormatImporterInterface {
   /**
    * Creates a new address format object for the given country code.
    *
-   * @param string $country_code
+   * @param string $countryCode
    *   The country code.
    *
    * @return \Drupal\address\Entity\AddressFormat | bool
    *    The new address format or false if the address format is already imported.
    */
-  public function importAddressFormat($country_code);
+  public function importAddressFormat($countryCode);
 }

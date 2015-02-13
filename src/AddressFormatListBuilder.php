@@ -31,10 +31,10 @@ class AddressFormatListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entityType) {
     return new static(
-      $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $entityType,
+      $container->get('entity.manager')->getStorage($entityType->id()),
       $container->get('country_manager')
     );
   }
@@ -42,18 +42,18 @@ class AddressFormatListBuilder extends ConfigEntityListBuilder {
   /**
    * Constructs a new AddressFormatListBuilder object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entityType
    *   The entity type definition.
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The entity storage class.
-   * @param \Drupal\Core\Locale\CountryManagerInterface $country_manager
+   * @param \Drupal\Core\Locale\CountryManagerInterface $countryManager
    *   The country manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, CountryManagerInterface $country_manager) {
-    $this->entityTypeId = $entity_type->id();
+  public function __construct(EntityTypeInterface $entityType, EntityStorageInterface $storage, CountryManagerInterface $countryManager) {
+    $this->entityTypeId = $entityType->id();
     $this->storage = $storage;
-    $this->entityType = $entity_type;
-    $this->countryManager = $country_manager;
+    $this->entityType = $entityType;
+    $this->countryManager = $countryManager;
   }
 
   /**
@@ -101,19 +101,19 @@ class AddressFormatListBuilder extends ConfigEntityListBuilder {
   /**
    * Returns the name of the country with the provided code.
    *
-   * @param string $country_code
+   * @param string $countryCode
    *   The country code.
    *
    * @return string
    *   The country name.
    */
-  protected function getCountryName($country_code) {
-    if ($country_code == 'ZZ') {
+  protected function getCountryName($countryCode) {
+    if ($countryCode == 'ZZ') {
       return $this->t('Generic');
     }
     else {
       $countries = $this->countryManager->getList();
-      return $countries[$country_code];
+      return $countries[$countryCode];
     }
   }
 

@@ -29,15 +29,15 @@ class AddressFormatDeleteForm extends EntityDeleteForm {
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The address format storage.
    */
-  public function __construct(CountryManagerInterface $country_manager) {
-    $this->countryManager = $country_manager;
+  public function __construct(CountryManagerInterface $countryManager) {
+    $this->countryManager = $countryManager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('country_manager'));
+    return new static($container->get('countryManager'));
   }
 
   /**
@@ -45,10 +45,10 @@ class AddressFormatDeleteForm extends EntityDeleteForm {
    */
   public function getQuestion() {
     $countries = $this->countryManager->getList();
-    $address_format = $this->getEntity();
+    $addressFormat = $this->getEntity();
 
     return $this->t('Are you sure you want to delete the address format for %country?', array(
-      '%country' => $countries[$address_format->getCountryCode()],
+      '%country' => $countries[$addressFormat->getCountryCode()],
     ));
   }
 

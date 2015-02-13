@@ -29,7 +29,7 @@ class AddressItem extends FieldItemBase implements AddressInterface {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldStorageDefinitionInterface $field_definition) {
+  public static function schema(FieldStorageDefinitionInterface $fieldDefinition) {
     return array(
       'columns' => array(
         'country_code' => array(
@@ -79,7 +79,7 @@ class AddressItem extends FieldItemBase implements AddressInterface {
   /**
    * {@inheritdoc}
    */
-  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+  public static function propertyDefinitions(FieldStorageDefinitionInterface $fieldDefinition) {
     $properties['country_code'] = DataDefinition::create('string')
       ->setLabel(t('The two-letter country code.'));
     $properties['administrative_area'] = DataDefinition::create('string')

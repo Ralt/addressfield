@@ -35,11 +35,11 @@ class SubdivisionListBuilder extends ConfigEntityListBuilder {
   /**
    * Sets the address format.
    *
-   * @param \Drupal\address\AddressFormatInterface $address_format
+   * @param \Drupal\address\AddressFormatInterface $addressFormat
    *   The address format.
    */
-  public function setAddressFormat(AddressFormatInterface $address_format) {
-    $this->addressFormat = $address_format;
+  public function setAddressFormat(AddressFormatInterface $addressFormat) {
+    $this->addressFormat = $addressFormat;
   }
 
   /**

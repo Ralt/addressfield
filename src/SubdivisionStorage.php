@@ -36,27 +36,27 @@ class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStora
   /**
    * Constructs a SubdivisionStorage object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entityType
    *   The entity type definition.
-   * @param \Drupal\address\SubdivisionRecordStorageInterface $record_storage
+   * @param \Drupal\address\SubdivisionRecordStorageInterface $recordStorage
    *   The record storage.
-   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
+   * @param \Drupal\Component\Uuid\UuidInterface $uuidService
    *   The UUID service.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, SubdivisionRecordStorageInterface $record_storage, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager) {
-    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
+  public function __construct(EntityTypeInterface $entityType, SubdivisionRecordStorageInterface $recordStorage, ConfigFactoryInterface $configFactory, UuidInterface $uuidService, LanguageManagerInterface $languageManager) {
+    parent::__construct($entityType, $configFactory, $uuidService, $languageManager);
 
-    $this->recordStorage = $record_storage;
+    $this->recordStorage = $recordStorage;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entityType) {
     return new static(
-      $entity_type,
+      $entityType,
       $container->get('address.subdivision_record_storage'),
       $container->get('config.factory'),
       $container->get('uuid'),
@@ -67,7 +67,7 @@ class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStora
   /**
    * {@inheritdoc}
    */
-  public static function getIDFromConfigName($config_name, $config_prefix) {
+  public static function getIDFromConfigName($name, $configPrefix) {
     // Importing individual entities via config is not possible because
     // they are not stored in individual config objects.
     return NULL;
