@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Entity\Query\SubdivisionQueryFactory.
+ * Contains \Drupal\address\Entity\Query\SubdivisionQueryFactory.
  */
 
-namespace Drupal\addressfield\Entity\Query;
+namespace Drupal\address\Entity\Query;
 
-use Drupal\addressfield\SubdivisionRecordStorageInterface;
+use Drupal\address\SubdivisionRecordStorageInterface;
 use Drupal\Core\Config\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Query\QueryBase;
@@ -20,14 +20,14 @@ class SubdivisionQueryFactory extends QueryFactory {
   /**
    * The record storage.
    *
-   * @var \Drupal\addressfield\SubdivisionRecordStorageInterface
+   * @var \Drupal\address\SubdivisionRecordStorageInterface
    */
   protected $recordStorage;
 
   /**
    * Constructs a SubdivisionQueryFactory object.
    *
-   * @param \Drupal\addressfield\SubdivisionRecordStorageInterface $record_storagey
+   * @param \Drupal\address\SubdivisionRecordStorageInterface $record_storagey
    *   The record storage used by the subdivision query.
    */
   public function __construct(SubdivisionRecordStorageInterface $record_storage) {

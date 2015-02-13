@@ -9,7 +9,7 @@ entity.address_format.collection:
 entity.address_format.import:
   path: '/admin/config/regional/address-formats/import'
   defaults:
-    _form: '\Drupal\addressfield\Form\AddressFormatImporterForm'
+    _form: '\Drupal\address\Form\AddressFormatImporterForm'
     _title: 'Import an address format'
   requirements:
     _permission: 'administer address formats'
@@ -42,7 +42,7 @@ entity.subdivision.collection:
   path: '/admin/config/regional/subdivisions/{address_format}/{parent}'
   defaults:
     parent: null
-    _controller: '\Drupal\addressfield\Controller\SubdivisionController::buildList'
+    _controller: '\Drupal\address\Controller\SubdivisionController::buildList'
     _title: 'Subdivisions'
   options:
     parameters:
@@ -57,7 +57,7 @@ entity.subdivision.add_form:
   path: '/admin/config/regional/subdivisions/add/{address_format}/{parent}'
   defaults:
     parent: null
-    _controller: '\Drupal\addressfield\Controller\SubdivisionController::addForm'
+    _controller: '\Drupal\address\Controller\SubdivisionController::addForm'
     _title: 'Add a new subdivision'
   options:
     parameters:

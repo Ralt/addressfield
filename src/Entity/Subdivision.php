@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Entity\Subdivision.
+ * Contains \Drupal\address\Entity\Subdivision.
  */
 
-namespace Drupal\addressfield\Entity;
+namespace Drupal\address\Entity;
 
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -18,11 +18,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *   id = "subdivision",
  *   label = @Translation("Subdivision"),
  *   handlers = {
- *     "storage" = "Drupal\addressfield\SubdivisionStorage",
- *     "list_builder" = "Drupal\addressfield\SubdivisionListBuilder",
+ *     "storage" = "Drupal\address\SubdivisionStorage",
+ *     "list_builder" = "Drupal\address\SubdivisionListBuilder",
  *     "form" = {
- *       "add" = "Drupal\addressfield\Form\SubdivisionForm",
- *       "edit" = "Drupal\addressfield\Form\SubdivisionForm",
+ *       "add" = "Drupal\address\Form\SubdivisionForm",
+ *       "edit" = "Drupal\address\Form\SubdivisionForm",
  *       "delete" = "Drupal\Core\Entity\EntityDeleteForm"
  *     }
  *   },

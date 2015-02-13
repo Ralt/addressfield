@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\SubdivisionStorageInterface.
+ * Contains \Drupal\address\SubdivisionStorageInterface.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 

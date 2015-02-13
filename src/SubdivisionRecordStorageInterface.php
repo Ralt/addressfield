@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\SubdivisionStorage.
+ * Contains \Drupal\address\SubdivisionStorage.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 /**
  * Defines the interface for subdivision record storage classes.

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Tests\AddressFormatTest.
+ * Contains \Drupal\address\Tests\AddressFormatTest.
  */
 
-namespace Drupal\addressfield\Tests;
+namespace Drupal\address\Tests;
 
 use Drupal\Core\Locale\CountryManager;
 use Drupal\simpletest\WebTestBase;
@@ -14,7 +14,7 @@ use Drupal\simpletest\WebTestBase;
 /**
  * Ensures that address format functions work correctly.
  *
- * @group addressfield
+ * @group address
  */
 class AddressFormatTest extends WebTestBase {
   /**
@@ -22,7 +22,7 @@ class AddressFormatTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('system', 'user', 'addressfield');
+  public static $modules = array('system', 'user', 'address');
 
   /**
    *

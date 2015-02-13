@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Form\AddressFormatFormDeleteForm.
+ * Contains \Drupal\address\Form\AddressFormatFormDeleteForm.
  */
 
-namespace Drupal\addressfield\Form;
+namespace Drupal\address\Form;
 
 use Drupal\Core\Entity\EntityDeleteForm;
 use Drupal\Core\Locale\CountryManagerInterface;

@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\AddressFormatImporter.
+ * Contains \Drupal\address\AddressFormatImporter.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use CommerceGuys\Addressing\Repository\AddressFormatRepository;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\addressfield\AddressFormatImporterInterface;
+use Drupal\address\AddressFormatImporterInterface;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 
 

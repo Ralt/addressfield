@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use CommerceGuys\Addressing\Provider\DataProviderInterface;
 use Drupal\Core\Locale\CountryManagerInterface;

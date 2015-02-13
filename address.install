@@ -3,7 +3,7 @@
 /**
  * Implements hook_requirements().
  */
-function addressfield_requirements($phase) {
+function address_requirements($phase) {
   $requirements = array();
 
   if ($phase == 'install') {

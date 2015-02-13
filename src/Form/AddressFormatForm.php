@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\addressfield\Form\AddressFormatForm.
+ * Contains Drupal\address\Form\AddressFormatForm.
  */
 
-namespace Drupal\addressfield\Form;
+namespace Drupal\address\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageInterface;

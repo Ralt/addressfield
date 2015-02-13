@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\SubdivisionStorage.
+ * Contains \Drupal\address\SubdivisionStorage.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Utility\String;
@@ -17,7 +17,7 @@ use Drupal\Component\Utility\String;
  * Since there are too many subdivisions (> 12 000), creating a config object
  * for each one would be impractical. Instead, their storage records are stored
  * grouped by parent ID. For example, 'US_CA' and 'US_DC' are both stored in
- * the addressfield.subdivisions.US config object. This reduces the number
+ * the address.subdivisions.US config object. This reduces the number
  * of needed config objects significantly (to around 520).
  */
 class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
@@ -59,7 +59,7 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    *   The prefix.
    */
   protected function getPrefix() {
-    return 'addressfield.subdivisions.';
+    return 'address.subdivisions.';
   }
 
   /**
@@ -68,7 +68,7 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    * The config object name is constructed from the prefix and the parent ID.
    * The parent ID is constructed by taking n-1 segments of the original ID.
    * E.g. for "BR_AL_64b095" the parent ID is "BR_AL", and the config name
-   * is "addressfield.subdivisions.BR_AL".
+   * is "address.subdivisions.BR_AL".
    *
    * @param string $id
    *   The ID.

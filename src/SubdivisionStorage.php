@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\SubdivisionStorage.
+ * Contains \Drupal\address\SubdivisionStorage.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
@@ -22,14 +22,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Instead of storing each subdivision in its own config object, it relies
  * on SubdivisionRecordStorage to store subdivisions grouped by parent ID.
  *
- * @see \Drupal\addressfield\SubdivisionRecordStorage
+ * @see \Drupal\address\SubdivisionRecordStorage
  */
 class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStorageInterface {
 
   /**
    * The record storage.
    *
-   * @var \Drupal\addressfield\SubdivisionRecordStorageInterface
+   * @var \Drupal\address\SubdivisionRecordStorageInterface
    */
   protected $recordStorage;
 
@@ -38,7 +38,7 @@ class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStora
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
-   * @param \Drupal\addressfield\SubdivisionRecordStorageInterface $record_storage
+   * @param \Drupal\address\SubdivisionRecordStorageInterface $record_storage
    *   The record storage.
    * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
    *   The UUID service.
@@ -57,7 +57,7 @@ class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStora
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('addressfield.subdivision_record_storage'),
+      $container->get('address.subdivision_record_storage'),
       $container->get('config.factory'),
       $container->get('uuid'),
       $container->get('language_manager')
@@ -77,7 +77,7 @@ class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStora
    * {@inheritdoc}
    */
   protected function getQueryServiceName() {
-    return 'addressfield.subdivision_query';
+    return 'address.subdivision_query';
   }
 
   /**

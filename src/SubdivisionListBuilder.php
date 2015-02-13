@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\SubdivisionListBuilder.
+ * Contains \Drupal\address\SubdivisionListBuilder.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
-use Drupal\addressfield\AddressFormatInterface;
+use Drupal\address\AddressFormatInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
@@ -21,7 +21,7 @@ class SubdivisionListBuilder extends ConfigEntityListBuilder {
   /**
    * The address format.
    *
-   * @var \Drupal\addressfield\AddressFormatInterface
+   * @var \Drupal\address\AddressFormatInterface
    */
   protected $addressFormat;
 
@@ -35,7 +35,7 @@ class SubdivisionListBuilder extends ConfigEntityListBuilder {
   /**
    * Sets the address format.
    *
-   * @param \Drupal\addressfield\AddressFormatInterface $address_format
+   * @param \Drupal\address\AddressFormatInterface $address_format
    *   The address format.
    */
   public function setAddressFormat(AddressFormatInterface $address_format) {

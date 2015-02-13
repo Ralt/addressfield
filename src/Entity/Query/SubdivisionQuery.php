@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Entity\Query\SubdivisionQuery.
+ * Contains \Drupal\address\Entity\Query\SubdivisionQuery.
  */
 
-namespace Drupal\addressfield\Entity\Query;
+namespace Drupal\address\Entity\Query;
 
-use Drupal\addressfield\SubdivisionRecordStorageInterface;
+use Drupal\address\SubdivisionRecordStorageInterface;
 use Drupal\Core\Config\Entity\Query\Query as ConfigQuery;
 use Drupal\Core\Entity\EntityTypeInterface;
 
@@ -19,7 +19,7 @@ class SubdivisionQuery extends ConfigQuery {
   /**
    * The record storage.
    *
-   * @var \Drupal\addressfield\SubdivisionRecordStorageInterface
+   * @var \Drupal\address\SubdivisionRecordStorageInterface
    */
   protected $recordStorage;
 
@@ -31,7 +31,7 @@ class SubdivisionQuery extends ConfigQuery {
    * @param string $conjunction
    *   - AND: all of the conditions on the query need to match.
    *   - OR: at least one of the conditions on the query need to match.
-   * @param \Drupal\addressfield\SubdivisionRecordStorageInterface $record_storage
+   * @param \Drupal\address\SubdivisionRecordStorageInterface $record_storage
    *   The record storage.
    * @param array $namespaces
    *   List of potential namespaces of the classes belonging to this query.

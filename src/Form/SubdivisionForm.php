@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\addressfield\Form\CommerceCurrencyForm.
+ * Contains Drupal\address\Form\CommerceCurrencyForm.
  */
 
-namespace Drupal\addressfield\Form;
+namespace Drupal\address\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
