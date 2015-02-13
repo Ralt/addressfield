@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Plugin\field\formatter\AddressDefaultFormatter.
+ * Contains \Drupal\address\Plugin\field\formatter\AddressDefaultFormatter.
  */
 
-namespace Drupal\addressfield\Plugin\Field\FieldFormatter;
+namespace Drupal\address\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;

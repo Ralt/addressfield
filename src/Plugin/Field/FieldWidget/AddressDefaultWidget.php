@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Plugin\Field\FieldWidget\AddressDefaultWidget.
+ * Contains \Drupal\address\Plugin\Field\FieldWidget\AddressDefaultWidget.
  */
 
-namespace Drupal\addressfield\Plugin\Field\FieldWidget;
+namespace Drupal\address\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;

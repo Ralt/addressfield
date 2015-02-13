@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\AddressFormatListBuilder.
+ * Contains \Drupal\address\AddressFormatListBuilder.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

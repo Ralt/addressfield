@@ -1,4 +1,4 @@
-addressfield.address_format.*:
+address.address_format.*:
   type: config_entity
   label: 'Address format'
   mapping:
@@ -37,7 +37,7 @@ addressfield.address_format.*:
       type: string
       label: 'Postal code prefix'
 
-addressfield.subdivisions.*:
+address.subdivisions.*:
   type: mapping
   label: 'Subdivisions'
   mapping:
@@ -45,9 +45,9 @@ addressfield.subdivisions.*:
       type: sequence
       label: 'Subdivisions'
       sequence:
-        - type: addressfield.subdivision.[%key]
+        - type: address.subdivision.[%key]
 
-addressfield.subdivision.*:
+address.subdivision.*:
   type: config_entity
   label: 'Subdivision'
   mapping:

@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Form\AddressFormatImporterForm.
+ * Contains \Drupal\address\Form\AddressFormatImporterForm.
  */
 
-namespace Drupal\addressfield\Form;
+namespace Drupal\address\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Locale\CountryManager;
-use Drupal\addressfield\AddressFieldImporter;
+use Drupal\address\AddressFieldImporter;
 
 
 /**
@@ -21,7 +21,7 @@ class AddressFormatImporterForm extends FormBase {
   /**
    * The address format importer.
    *
-   * @var \Drupal\addressfield\AddressFormatImporterInterface
+   * @var \Drupal\address\AddressFormatImporterInterface
    */
   protected $addressFormatImporter;
 
@@ -29,7 +29,7 @@ class AddressFormatImporterForm extends FormBase {
    * Constructs a new AddressFormatImporterForm.
    */
   public function __construct() {
-    $this->addressFormatImporter = \Drupal::service('addressfield.address_format_importer');
+    $this->addressFormatImporter = \Drupal::service('address.address_format_importer');
   }
 
   /**
@@ -94,7 +94,7 @@ class AddressFormatImporterForm extends FormBase {
       }
     } catch (\Exception $e) {
       drupal_set_message($this->t('The %label address format was not imported.', array('%label' => $address_format->label())), 'error');
-      $this->logger('addressfield')->error($e);
+      $this->logger('address')->error($e);
       $form_state->setRebuild();
     }
   }
@@ -103,6 +103,6 @@ class AddressFormatImporterForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'addressfield_address_format_importer';
+    return 'address_address_format_importer';
   }
 }

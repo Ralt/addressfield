@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Entity\AddressFormat.
+ * Contains \Drupal\address\Entity\AddressFormat.
  */
 
-namespace Drupal\addressfield\Entity;
+namespace Drupal\address\Entity;
 
 use CommerceGuys\Addressing\Model\AddressFormatInterface;
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
@@ -20,11 +20,11 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *   label = @Translation("Address format"),
  *   handlers = {
  *     "form" = {
- *       "add" = "Drupal\addressfield\Form\AddressFormatForm",
- *       "edit" = "Drupal\addressfield\Form\AddressFormatForm",
- *       "delete" = "Drupal\addressfield\Form\AddressFormatDeleteForm"
+ *       "add" = "Drupal\address\Form\AddressFormatForm",
+ *       "edit" = "Drupal\address\Form\AddressFormatForm",
+ *       "delete" = "Drupal\address\Form\AddressFormatDeleteForm"
  *     },
- *     "list_builder" = "Drupal\addressfield\AddressFormatListBuilder",
+ *     "list_builder" = "Drupal\address\AddressFormatListBuilder",
  *   },
  *   admin_permission = "administer address formats",
  *   config_prefix = "address_format",

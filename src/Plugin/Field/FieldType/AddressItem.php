@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Plugin\Field\FieldType\AddressItem.
+ * Contains \Drupal\address\Plugin\Field\FieldType\AddressItem.
  */
 
-namespace Drupal\addressfield\Plugin\Field\FieldType;
+namespace Drupal\address\Plugin\Field\FieldType;
 
 use CommerceGuys\Addressing\Model\AddressInterface;
 use Drupal\Core\Field\FieldItemBase;

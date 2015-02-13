@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\Controller\SubdivisionController.
+ * Contains \Drupal\address\Controller\SubdivisionController.
  */
 
-namespace Drupal\addressfield\Controller;
+namespace Drupal\address\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;

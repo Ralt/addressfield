@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\addressfield\AddressFormatImporterInterface.
+ * Contains \Drupal\address\AddressFormatImporterInterface.
  */
 
-namespace Drupal\addressfield;
+namespace Drupal\address;
 
 /**
  * Defines an address format importer.
@@ -26,7 +26,7 @@ interface AddressFormatImporterInterface {
    * @param string $country_code
    *   The country code.
    *
-   * @return \Drupal\addressfield\Entity\AddressFormat | bool
+   * @return \Drupal\address\Entity\AddressFormat | bool
    *    The new address format or false if the address format is already imported.
    */
   public function importAddressFormat($country_code);
