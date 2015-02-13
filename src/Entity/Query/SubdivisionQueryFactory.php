@@ -27,19 +27,19 @@ class SubdivisionQueryFactory extends QueryFactory {
   /**
    * Constructs a SubdivisionQueryFactory object.
    *
-   * @param \Drupal\address\SubdivisionRecordStorageInterface $record_storagey
+   * @param \Drupal\address\SubdivisionRecordStorageInterface $recordStorage
    *   The record storage used by the subdivision query.
    */
-  public function __construct(SubdivisionRecordStorageInterface $record_storage) {
-    $this->recordStorage = $record_storage;
+  public function __construct(SubdivisionRecordStorageInterface $recordStorage) {
+    $this->recordStorage = $recordStorage;
     $this->namespaces = QueryBase::getNamespaces($this);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function get(EntityTypeInterface $entity_type, $conjunction) {
-    return new SubdivisionQuery($entity_type, $conjunction, $this->recordStorage, $this->namespaces);
+  public function get(EntityTypeInterface $entityType, $conjunction) {
+    return new SubdivisionQuery($entityType, $conjunction, $this->recordStorage, $this->namespaces);
   }
 
 }

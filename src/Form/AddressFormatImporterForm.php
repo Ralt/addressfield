@@ -35,10 +35,10 @@ class AddressFormatImporterForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $address_formats = $this->addressFormatImporter->getImportableAddressFormats();
+  public function buildForm(array $form, FormStateInterface $formState) {
+    $addressFormats = $this->addressFormatImporter->getImportableAddressFormats();
 
-    if (!$address_formats) {
+    if (!$addressFormats) {
       $form['message'] = array(
         '#markup' => $this->t('All address formats are already imported.'),
       );
@@ -74,28 +74,28 @@ class AddressFormatImporterForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValues();
-    $address_format = $this->addressFormatImporter->importAddressFormat(
+  public function submitForm(array &$form, FormStateInterface $formState) {
+    $values = $formState->getValues();
+    $addressFormat = $this->addressFormatImporter->importAddressFormat(
       $values['country_code']
     );
 
     try {
-      $address_format->save();
+      $addressFormat->save();
       drupal_set_message(
-        $this->t('Imported the %label address format.', array('%label' => $address_format->label()))
+        $this->t('Imported the %label address format.', array('%label' => $addressFormat->label()))
       );
-      $triggering_element = $form_state->getTriggeringElement();
-      if ($triggering_element['#name'] == 'import_and_new') {
-        $form_state->setRebuild();
+      $triggeringElement = $formState->getTriggeringElement();
+      if ($triggeringElement['#name'] == 'import_and_new') {
+        $formState->setRebuild();
       }
       else {
-        $form_state->setRedirect('entity.address_format.list');
+        $formState->setRedirect('entity.address_format.list');
       }
     } catch (\Exception $e) {
-      drupal_set_message($this->t('The %label address format was not imported.', array('%label' => $address_format->label())), 'error');
+      drupal_set_message($this->t('The %label address format was not imported.', array('%label' => $addressFormat->label())), 'error');
       $this->logger('address')->error($e);
-      $form_state->setRebuild();
+      $formState->setRebuild();
     }
   }
 

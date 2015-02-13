@@ -26,22 +26,22 @@ class SubdivisionQuery extends ConfigQuery {
   /**
    * Constructs a SubdivisionQuery object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entityType
    *   The entity type definition.
    * @param string $conjunction
    *   - AND: all of the conditions on the query need to match.
    *   - OR: at least one of the conditions on the query need to match.
-   * @param \Drupal\address\SubdivisionRecordStorageInterface $record_storage
+   * @param \Drupal\address\SubdivisionRecordStorageInterface $recordStorage
    *   The record storage.
    * @param array $namespaces
    *   List of potential namespaces of the classes belonging to this query.
    */
-  function __construct(EntityTypeInterface $entity_type, $conjunction, SubdivisionRecordStorageInterface $record_storage, array $namespaces) {
-    $this->recordStorage = $record_storage;
+  function __construct(EntityTypeInterface $entityType, $conjunction, SubdivisionRecordStorageInterface $recordStorage, array $namespaces) {
+    $this->recordStorage = $recordStorage;
     // Copy of QueryBase::__construct(), since we can't call the parent
     // __construct() because ConfigQuery needs the ConfigFactory param.
-    $this->entityTypeId = $entity_type->id();
-    $this->entityType = $entity_type;
+    $this->entityTypeId = $entityType->id();
+    $this->entityType = $entityType;
     $this->conjunction = $conjunction;
     $this->namespaces = $namespaces;
     $this->condition = $this->conditionGroupFactory($conjunction);
@@ -57,13 +57,13 @@ class SubdivisionQuery extends ConfigQuery {
     if ($ids) {
       return $this->recordStorage->loadMultiple($ids);
     }
-    $parent_ids = $this->getConditionValues('parentId');
-    if ($parent_ids) {
-      return $this->recordStorage->loadChildren($parent_ids);
+    $parentIds = $this->getConditionValues('parentId');
+    if ($parentIds) {
+      return $this->recordStorage->loadChildren($parentIds);
     }
-    $country_codes = $this->getConditionValues('countryCode');
-    if ($country_codes) {
-      return $this->recordStorage->loadChildren($country_codes);
+    $countryCodes = $this->getConditionValues('countryCode');
+    if ($countryCodes) {
+      return $this->recordStorage->loadChildren($countryCodes);
     }
 
     throw new \RuntimeException('The subdivision query must have a condition on id, parentId, or countryCode.');

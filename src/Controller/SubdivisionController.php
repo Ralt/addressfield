@@ -25,11 +25,11 @@ class SubdivisionController extends ControllerBase {
    * @return array
    *   The subdivision add form.
    */
-  public function addForm(RouteMatchInterface $route_match) {
-    $address_format = $route_match->getParameter('address_format');
-    $parent = $route_match->getParameter('parent');
+  public function addForm(RouteMatchInterface $routeMatch) {
+    $addressFormat = $routeMatch->getParameter('address_format');
+    $parent = $routeMatch->getParameter('parent');
     $values = array(
-      'countryCode' => $address_format->getCountryCode(),
+      'countryCode' => $addressFormat->getCountryCode(),
       'parentId' => $parent ? $parent->id() : NULL,
     );
     $subdivision = $this->entityManager()->getStorage('subdivision')->create($values);
@@ -46,12 +46,12 @@ class SubdivisionController extends ControllerBase {
    * @return array
    *   The subdivision list.
    */
-  public function buildList(RouteMatchInterface $route_match) {
-    $list_builder = $this->entityManager()->getListBuilder('subdivision');
-    $list_builder->setAddressFormat($route_match->getParameter('address_format'));
-    $list_builder->setParent($route_match->getParameter('parent'));
+  public function buildList(RouteMatchInterface $routeMatch) {
+    $listBuilder = $this->entityManager()->getListBuilder('subdivision');
+    $listBuilder->setAddressFormat($routeMatch->getParameter('address_format'));
+    $listBuilder->setParent($routeMatch->getParameter('parent'));
     $build = array();
-    $build['subdivision_table'] = $list_builder->render();
+    $build['subdivision_table'] = $listBuilder->render();
 
     return $build;
   }

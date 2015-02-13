@@ -18,17 +18,17 @@ class SubdivisionForm extends EntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    /** @var \Drupal\Core\Entity\EntityManagerInterface $entity_manager */
-    $entity_manager = $container->get('entity.manager');
+    /** @var \Drupal\Core\Entity\EntityManagerInterface $entityManager */
+    $entityManager = $container->get('entity.manager');
 
-    return new static($entity_manager->getStorage('subdivision'));
+    return new static($entityManager->getStorage('subdivision'));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, FormStateInterface $form_state) {
-    $form = parent::form($form, $form_state);
+  public function form(array $form, FormStateInterface $formState) {
+    $form = parent::form($form, $formState);
     $subdivision = $this->entity;
 
     $form['id'] = array(
@@ -68,14 +68,14 @@ class SubdivisionForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $formState) {
     $subdivision = $this->entity;
     $subdivision->setId($this->getIdPrefix() . $subdivision->getId());
     $subdivision->save();
     drupal_set_message($this->t('Saved the %label subdivision.', array(
       '%label' => $subdivision->label(),
     )));
-    $form_state->setRedirectUrl($subdivision->urlInfo('collection'));
+    $formState->setRedirectUrl($subdivision->urlInfo('collection'));
   }
 
   /**

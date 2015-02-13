@@ -36,7 +36,7 @@ class AddressPostalFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $formState) {
     $elements['originCountry'] = array(
       '#title' => t('Origin Country'),
       '#description' => t('The Origin Country to format the address in.'),

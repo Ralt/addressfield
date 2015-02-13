@@ -32,11 +32,11 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
   /**
    * Constructs a SubdivisionRecordStorage object.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
-    $this->configFactory = $config_factory;
+  public function __construct(ConfigFactoryInterface $configFactory) {
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -77,14 +77,14 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    *   The config name, or NULL if the provided ID is malformed.
    */
   protected function getConfigName($id) {
-    $parent_id = NULL;
-    $id_parts = explode('_', $id);
-    if (count($id_parts) > 1) {
-      array_pop($id_parts);
-      $parent_id = $this->getPrefix() . implode('_', $id_parts);
+    $parentId = NULL;
+    $idParts = explode('_', $id);
+    if (count($idParts) > 1) {
+      array_pop($idParts);
+      $parentId = $this->getPrefix() . implode('_', $idParts);
     }
 
-    return $parent_id;
+    return $parentId;
   }
 
   /**
@@ -94,33 +94,33 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    *   The IDs.
    *
    * @return array
-   *   An array in the $config_name => $ids format.
+   *   An array in the $name => $ids format.
    */
   protected function getConfigNames($ids) {
-    $config_names = array();
+    $names = array();
     foreach ($ids as $id) {
       // Gather the needed config names. Ignore any malformed id.
-      $config_name = $this->getConfigName($id);
-      if ($config_name) {
-        $config_names[$config_name][] = $id;
+      $name = $this->getConfigName($id);
+      if ($name) {
+        $names[$name][] = $id;
       }
     }
 
-    return $config_names;
+    return $names;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function loadMultiple(array $ids, $override_free = FALSE) {
-    $config_names = $this->getConfigNames($ids);
-    $root_key = $this->getRootKey();
+  public function loadMultiple(array $ids, $overrideFree = FALSE) {
+    $names = $this->getConfigNames($ids);
+    $rootKey = $this->getRootKey();
     $records = array();
-    foreach ($this->configFactory->loadMultiple(array_keys($config_names)) as $config) {
-      $data = $override_free ? $config->getOriginal($root_key, FALSE) : $config->get($root_key);
-      $loaded_ids = array_keys($data);
-      $needed_ids = array_intersect($ids, $loaded_ids);
-      $records += array_intersect_key($data, array_flip($needed_ids));
+    foreach ($this->configFactory->loadMultiple(array_keys($names)) as $config) {
+      $data = $overrideFree ? $config->getOriginal($rootKey, FALSE) : $config->get($rootKey);
+      $loadedIds = array_keys($data);
+      $neededIds = array_intersect($ids, $loadedIds);
+      $records += array_intersect_key($data, array_flip($neededIds));
     }
 
     return $records;
@@ -129,16 +129,16 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadChildren(array $parent_ids, $override_free = FALSE) {
+  public function loadChildren(array $parentIds, $overrideFree = FALSE) {
     $prefix = $this->getPrefix();
-    $config_names = array();
-    foreach ($parent_ids as $parent_id) {
-      $config_names[] = $prefix . $parent_id;
+    $names = array();
+    foreach ($parentIds as $parentId) {
+      $names[] = $prefix . $parentId;
     }
-    $root_key = $this->getRootKey();
+    $rootKey = $this->getRootKey();
     $records = array();
-    foreach ($this->configFactory->loadMultiple($config_names) as $config) {
-      $records += $override_free ? $config->getOriginal($root_key, FALSE) : $config->get($root_key);
+    foreach ($this->configFactory->loadMultiple($names) as $config) {
+      $records += $overrideFree ? $config->getOriginal($rootKey, FALSE) : $config->get($rootKey);
     }
 
     return $records;
@@ -148,17 +148,17 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    * {@inheritdoc}
    */
   public function exists($id) {
-    $config_name = $this->getConfigName($id);
-    if (!$config_name) {
+    $name = $this->getConfigName($id);
+    if (!$name) {
       // Malformed id.
       return FALSE;
     }
-    $configs = $this->configFactory->loadMultiple(array($config_name));
+    $configs = $this->configFactory->loadMultiple(array($name));
     if (empty($configs)) {
       return FALSE;
     }
     $config = reset($configs);
-    $data = $config->get($root_key . '.' . $id);
+    $data = $config->get($rootKey . '.' . $id);
 
     return !empty($data);
   }
@@ -167,15 +167,15 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    * {@inheritdoc}
    */
   public function delete(array $ids) {
-    $root_key = $this->getRootKey();
-    foreach ($this->getConfigNames($ids) as $config_name => $grouped_ids) {
-      $config = $this->configFactory->getEditable($config_name);
-      foreach ($grouped_ids as $id) {
-        $config->clear($root_key . '.' . $id);
+    $rootKey = $this->getRootKey();
+    foreach ($this->getConfigNames($ids) as $name => $groupedIds) {
+      $config = $this->configFactory->getEditable($name);
+      foreach ($groupedIds as $id) {
+        $config->clear($rootKey . '.' . $id);
       }
 
       // Delete the config object if it contains no other records.
-      $data = $config->get($root_key);
+      $data = $config->get($rootKey);
       if (empty($data)) {
         $config->delete();
       }
@@ -187,14 +187,14 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    */
   public function save($id, array $record) {
     // Make sure that the ID can be mapped to a config name.
-    $config_name = $this->getConfigName($id);
-    if (!$config_name) {
+    $name = $this->getConfigName($id);
+    if (!$name) {
       throw new \InvalidArgumentException(String::format('The subdivision ID "@id" is malformed.', array('@id' => $id)));
     }
 
-    $root_key = $this->getRootKey();
-    $config = $this->configFactory->getEditable($config_name);
-    $config->set($root_key . '.' . $id, $record);
+    $rootKey = $this->getRootKey();
+    $config = $this->configFactory->getEditable($name);
+    $config->set($rootKey . '.' . $id, $record);
     $config->save();
   }
 
@@ -203,11 +203,11 @@ class SubdivisionRecordStorage implements SubdivisionRecordStorageInterface {
    */
   public function saveMultiple(array $records) {
     $ids = array_keys($records);
-    $root_key = $this->getRootKey();
-    foreach ($this->getConfigNames($ids) as $config_name => $grouped_ids) {
-      $config = $this->configFactory->getEditable($config_name);
-      foreach ($grouped_ids as $id) {
-        $config->set($root_key . '.' . $id, $records[$id]);
+    $rootKey = $this->getRootKey();
+    foreach ($this->getConfigNames($ids) as $name => $groupedIds) {
+      $config = $this->configFactory->getEditable($name);
+      foreach ($groupedIds as $id) {
+        $config->set($rootKey . '.' . $id, $records[$id]);
       }
       $config->save();
     }

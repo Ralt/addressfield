@@ -41,14 +41,14 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
   /**
    * Constructs a new CurrencyImporter.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
    *   The entity manager.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager) {
-    $this->addressFormatStorage = $entity_manager->getStorage('address_format');
-    $this->languageManager = $language_manager;
+  public function __construct(EntityManagerInterface $entityManager, LanguageManagerInterface $languageManager) {
+    $this->addressFormatStorage = $entityManager->getStorage('address_format');
+    $this->languageManager = $languageManager;
     $this->addressFormatRepository = new AddressFormatRepository();
   }
 
@@ -57,40 +57,40 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    */
   public function getImportableAddressFormats() {
     $language = $this->languageManager->getCurrentLanguage();
-    $importable_address_formats = $this->addressFormatRepository->getAll($language->getId());
-    $imported_address_formats = $this->addressFormatStorage->loadMultiple();
+    $importableAddressFormats = $this->addressFormatRepository->getAll($language->getId());
+    $importedAddressFormats = $this->addressFormatStorage->loadMultiple();
 
     // Remove any already imported currencies.
-    foreach ($imported_address_formats as $address_format) {
-      if (isset($importable_address_formats[$address_format->id()])) {
-        unset($importable_address_formats[$address_format->id()]);
+    foreach ($importedAddressFormats as $addressFormat) {
+      if (isset($importableAddressFormats[$addressFormat->id()])) {
+        unset($importableAddressFormats[$addressFormat->id()]);
       }
     }
 
-    return $importable_address_formats;
+    return $importableAddressFormats;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function importAddressFormat($country_code) {
-    if ($this->addressFormatStorage->load($country_code)) {
+  public function importAddressFormat($countryCode) {
+    if ($this->addressFormatStorage->load($countryCode)) {
       return FALSE;
     }
     $language = $this->languageManager->getDefaultLanguage();
-    $address_format = $this->getAddressFormat($country_code, $language);
+    $addressFormat = $this->getAddressFormat($countryCode, $language);
 
     $values = array(
-      'countryCode' => $address_format->getCountryCode(),
-      'format' => $address_format->getFormat(),
-      'requiredFields' => $address_format->getRequiredFields(),
-      'uppercaseFields' => $address_format->getUppercaseFields(),
-      'administrativeAreaType' => $address_format->getAdministrativeAreaType(),
-      'localityType' => $address_format->getLocalityType(),
-      'dependentLocalityType' => $address_format->getDependentLocalityType(),
-      'postalCodeType' => $address_format->getPostalCodeType(),
-      'postalCodePattern' => $address_format->getPostalCodePattern(),
-      'postalCodePrefix' => $address_format->getPostalCodePrefix(),
+      'countryCode' => $addressFormat->getCountryCode(),
+      'format' => $addressFormat->getFormat(),
+      'requiredFields' => $addressFormat->getRequiredFields(),
+      'uppercaseFields' => $addressFormat->getUppercaseFields(),
+      'administrativeAreaType' => $addressFormat->getAdministrativeAreaType(),
+      'localityType' => $addressFormat->getLocalityType(),
+      'dependentLocalityType' => $addressFormat->getDependentLocalityType(),
+      'postalCodeType' => $addressFormat->getPostalCodeType(),
+      'postalCodePattern' => $addressFormat->getPostalCodePattern(),
+      'postalCodePrefix' => $addressFormat->getPostalCodePrefix(),
     );
     $entity = $this->addressFormatStorage->create($values);
 
@@ -100,7 +100,7 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
   /**
    * Get a single currency.
    *
-   * @param string $country_code
+   * @param string $countryCode
    *   The country code.
    * @param \Drupal\Core\Language\LanguageInterface $language
    *   The language.
@@ -108,7 +108,7 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    * @return CommerceGuys\Addressing\Model\AddressFormat
    *   Returns \CommerceGuys\Addressing\Model\AddressFormat
    */
-  protected function getAddressFormat($country_code, LanguageInterface $language) {
-    return $this->addressFormatRepository->get($country_code, $language->getId());
+  protected function getAddressFormat($countryCode, LanguageInterface $language) {
+    return $this->addressFormatRepository->get($countryCode, $language->getId());
   }
 }
