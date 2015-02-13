@@ -56,10 +56,14 @@ class SubdivisionListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function load() {
-    return $this->storage->loadByProperties(array(
+    $values = array(
       'countryCode' => $this->addressFormat->getCountryCode(),
-      'parentId' => $this->parent ? $this->parent->id() : null,
-    ));
+    );
+    if ($this->parent) {
+      $values['parentId'] = $this->parent->id();
+    }
+
+    return $this->storage->loadByProperties($values);
   }
 
   /**

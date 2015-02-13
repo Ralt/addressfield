@@ -8,10 +8,8 @@
 namespace Drupal\addressfield\Entity;
 
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\Annotation\ConfigEntityType;
 
 /**
  * Defines the Subdivision configuration entity.
@@ -94,18 +92,11 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   protected $postalCodePattern;
 
   /**
-   * The children ids.
-   *
-   * @var array
-   */
-  protected $childrenIds = [];
-
-  /**
    * The children entities.
    *
    * @var \CommerceGuys\Addressing\Model\SubdivisionInterface[]
    */
-  protected $children = [];
+  protected $children;
 
   /**
    * {@inheritdoc}
@@ -214,16 +205,10 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   /**
    * {@inheritdoc}
    */
-  public function getChildrenIds() {
-    return $this->childrenIds;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getChildren() {
-    if (empty($this->children) && !empty($this->childrenIds)) {
-      $this->children = self::loadMultiple($this->childrenIds);
+    if (!isset($this->children)) {
+      $storage = $this->entityManager()->getStorage('subdivision');
+      $this->children = $storage->loadByProperties(array('parentId' => $this->id));
     }
 
     return $this->children;
@@ -234,7 +219,6 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function setChildren($children) {
     $this->children = $children;
-    $this->childrenIds = $this->recalculateChildrenIds($children);
 
     return $this;
   }
@@ -243,7 +227,9 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    * {@inheritdoc}
    */
   public function hasChildren() {
-    return !empty($this->childrenIds);
+    $children = $this->getChildren();
+
+    return !empty($children);
   }
 
   /**
@@ -251,8 +237,7 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function addChild(SubdivisionInterface $child) {
     if (!$this->hasChild($child)) {
-      $this->childrenIds[] = $child->id();
-      $this->children = NULL;
+      $this->children[] = $child;
     }
 
     return $this;
@@ -264,10 +249,9 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   public function removeChild(SubdivisionInterface $child) {
     if ($this->hasChild($child)) {
       // Remove the child and rekey the array.
-      $index = array_search($child, $this->childrenIds);
-      unset($this->childrenIds[$index]);
-      $this->childrenIds = array_values($this->childrenIds);
-      $this->children = NULL;
+      $index = array_search($child, $this->children, TRUE);
+      unset($this->children[$index]);
+      $this->children = array_values($this->children);
     }
 
     return $this;
@@ -277,83 +261,9 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    * {@inheritdoc}
    */
   public function hasChild(SubdivisionInterface $child) {
-    return in_array($child->id(), $this->childrenIds);
-  }
+    $children = $this->getChildren();
 
-  /**
-   * {@inheritdoc}
-   */
-  public function calculateDependencies() {
-    parent::calculateDependencies();
-
-    // Depend on the parent entity. That is either another subdivision,
-    // or the address format (for top level subdivisions).
-    $parent = $this->getParent();
-    if ($parent) {
-      $this->addDependency('config', $parent->getConfigDependencyName());
-    }
-    else {
-      $format = AddressFormat::load($this->countryCode);
-      $this->addDependency('config', $format->getConfigDependencyName());
-    }
-
-    return $this->dependencies;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    parent::postSave($storage, $update);
-
-    if ($this->isSyncing()) {
-      // Imported configuration already has the correct relationships.
-      return;
-    }
-
-    if (!$update) {
-      // Add the new subdivision to the parent entity. That is either another
-      // subdivision, or the address format (for top level subdivisions).
-      $parent = $this->getParent();
-      if ($parent) {
-        $parent->addChild($this);
-        $parent->save();
-      }
-      else {
-        $format = AddressFormat::load($this->countryCode);
-        $format->addSubdivision($this);
-        $format->save();
-      }
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function postDelete(EntityStorageInterface $storage, array $entities) {
-    parent::postDelete($storage, $entities);
-
-    foreach ($entities as $entity) {
-      if ($entity->isSyncing()) {
-        // Imported configuration already has the correct relationships.
-        return;
-      }
-
-      // Remove the deleted subdivisions from parent entities. Those are either
-      // other subdivisions, or address formats (for top level subdivisions).
-      $parent = $entity->getParent();
-      if ($parent) {
-        $parent->removeChild($entity);
-        $parent->save();
-      }
-      else {
-        $format = AddressFormat::load($entity->getCountryCode());
-        if ($format) {
-          $format->removeSubdivision($entity);
-          $format->save();
-        }
-      }
-    }
+    return in_array($child, $children, TRUE);
   }
 
   /**
@@ -370,6 +280,20 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
     }
 
     return $parameters;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    // If this entity is not new, load the original entity for comparison.
+    if (!$this->isNew()) {
+      $original = $storage->loadUnchanged($this->getOriginalId());
+      // Ensure that the UUID cannot be changed for an existing entity.
+      if ($original && ($original->uuid() != $this->uuid())) {
+        throw new ConfigDuplicateUUIDException(String::format('Attempt to save a configuration entity %id with UUID %uuid when this entity already exists with UUID %original_uuid', array('%id' => $this->id(), '%uuid' => $this->uuid(), '%original_uuid' => $original->uuid())));
+      }
+    }
   }
 
 }

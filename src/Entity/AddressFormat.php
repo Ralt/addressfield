@@ -7,9 +7,10 @@
 
 namespace Drupal\addressfield\Entity;
 
+use CommerceGuys\Addressing\Model\AddressFormatInterface;
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
-use Drupal\addressfield\AddressFormatInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
  * Defines the AddressFormat configuration entity.
@@ -110,20 +111,6 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
    * @var string
    */
   protected $postalCodePrefix;
-
-  /**
-   * The subdivision ids.
-   *
-   * @var array
-   */
-  protected $subdivisionIds = [];
-
-  /**
-   * The subdivision entities.
-   *
-   * @var \CommerceGuys\Addressing\Model\SubdivisionInterface[]
-   */
-  protected $subdivisions = [];
 
   /**
    * Get the list of administrative area types defined by the AddressFormatInterface.
@@ -380,59 +367,16 @@ class AddressFormat extends ConfigEntityBase implements AddressFormatInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSubdivisions() {
-    if (empty($this->subdivisions) && !empty($this->subdivisionIds)) {
-      $this->subdivisions = Subdivision::loadMultiple($this->subdivisionIds);
-    }
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
 
-    return $this->subdivisions;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSubdivisions($subdivisions) {
-    $this->subdivisions = $subdivisions;
-    $this->subdivisionIds = '';
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function hasSubdivisions() {
-    return !empty($this->subdivisionIds);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addSubdivision(SubdivisionInterface $subdivision) {
-    if (!$this->hasSubdivision($subdivision)) {
-      $this->subdivisionIds[] = $subdivision->id();
-      $this->subdivisions = NULL;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function removeSubdivision(SubdivisionInterface $subdivision) {
-    if ($this->hasSubdivision($subdivision)) {
-      // Remove the subdivision and rekey the array.
-      $index = array_search($subdivision->id(), $this->subdivisionIds);
-      unset($this->subdivisionIds[$index]);
-      $this->subdivisionIds = array_values($this->subdivisions);
-      $this->subdivisions = NULL;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function hasSubdivision(SubdivisionInterface $subdivision) {
-    return in_array($subdivision->id(), $this->subdivisionIds);
+    // Remove the related subdivisions for each address format.
+    // Ignore all address formats with the syncing flag set, assuming that the
+    // import process will take care of their related subdivisions.
+    $entities = array_filter($entities, function($entity) {
+      return !$entity->isSyncing();
+    });
+    \Drupal::entityManager()->getStorage('subdivision')->deleteChildren($entities);
   }
 
 }

@@ -1,4 +1,12 @@
 services:
+  addressfield.subdivision_record_storage:
+    class: Drupal\addressfield\SubdivisionRecordStorage
+    arguments: ['@config.factory']
+
+  addressfield.subdivision_query:
+    class: Drupal\addressfield\Entity\Query\SubdivisionQueryFactory
+    arguments: ['@addressfield.subdivision_record_storage']
+
   addressfield.address_format_importer:
     class: Drupal\addressfield\AddressFormatImporter
     arguments: ['@entity.manager', '@language_manager']

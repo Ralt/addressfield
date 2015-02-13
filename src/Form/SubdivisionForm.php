@@ -35,6 +35,7 @@ class SubdivisionForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('ID'),
       '#description' => $this->t(''),
+      '#field_prefix' => $this->getIdPrefix(),
       '#default_value' => $subdivision->getId(),
       '#maxlength' => 255,
       '#required' => TRUE,
@@ -69,11 +70,30 @@ class SubdivisionForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $subdivision = $this->entity;
+    $subdivision->setId($this->getIdPrefix() . $subdivision->getId());
     $subdivision->save();
     drupal_set_message($this->t('Saved the %label subdivision.', array(
       '%label' => $subdivision->label(),
     )));
     $form_state->setRedirectUrl($subdivision->urlInfo('collection'));
+  }
+
+  /**
+   * Returns the id prefix for the current entity.
+   *
+   * @return string
+   *   The id prefix.
+   */
+  protected function getIdPrefix() {
+    $parent = $this->entity->getParent();
+    if ($parent) {
+      $prefix = $parent->id() . '_';
+    }
+    else {
+      $prefix = $this->entity->getCountryCode() . '_';
+    }
+
+    return $prefix;
   }
 
 }

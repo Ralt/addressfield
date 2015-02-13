@@ -36,11 +36,16 @@ addressfield.address_format.*:
     postalCodePrefix:
       type: string
       label: 'Postal code prefix'
-    subdivisionIds:
+
+addressfield.subdivisions.*:
+  type: mapping
+  label: 'Subdivisions'
+  mapping:
+    subdivisions:
       type: sequence
-      label: 'Subdivision ids'
+      label: 'Subdivisions'
       sequence:
-        - type: string
+        - type: addressfield.subdivision.[%key]
 
 addressfield.subdivision.*:
   type: config_entity
@@ -62,8 +67,3 @@ addressfield.subdivision.*:
       type: label
       label: 'Name'
       translatable: true
-    childrenIds:
-      type: sequence
-      label: 'Children ids'
-      sequence:
-        - type: string

@@ -7,25 +7,164 @@
 
 namespace Drupal\addressfield;
 
-use Drupal\addressfield\Entity\AddressFormat;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityMalformedException;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class SubdivisionStorage extends ConfigEntityStorage {
+/**
+ * Storage for subdivision entities.
+ *
+ * Instead of storing each subdivision in its own config object, it relies
+ * on SubdivisionRecordStorage to store subdivisions grouped by parent ID.
+ *
+ * @see \Drupal\addressfield\SubdivisionRecordStorage
+ */
+class SubdivisionStorage extends ConfigEntityStorage implements SubdivisionStorageInterface {
+
+  /**
+   * The record storage.
+   *
+   * @var \Drupal\addressfield\SubdivisionRecordStorageInterface
+   */
+  protected $recordStorage;
+
+  /**
+   * Constructs a SubdivisionStorage object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition.
+   * @param \Drupal\addressfield\SubdivisionRecordStorageInterface $record_storage
+   *   The record storage.
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
+   *   The UUID service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   */
+  public function __construct(EntityTypeInterface $entity_type, SubdivisionRecordStorageInterface $record_storage, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager) {
+    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
+
+    $this->recordStorage = $record_storage;
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function loadByProperties(array $values = array()) {
-    // @todo Override the config query service for this entity type instead.
-    // This will allow us to not ignore other properties.
-    if (!empty($values['parentId'])) {
-      $parent = $this->load($values['parentId']);
-      return $parent->getChildren();
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('addressfield.subdivision_record_storage'),
+      $container->get('config.factory'),
+      $container->get('uuid'),
+      $container->get('language_manager')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getIDFromConfigName($config_name, $config_prefix) {
+    // Importing individual entities via config is not possible because
+    // they are not stored in individual config objects.
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getQueryServiceName() {
+    return 'addressfield.subdivision_query';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doLoadMultiple(array $ids = NULL) {
+    if ($ids === NULL) {
+      // There are too many entities to list at once.
+      return array();
     }
-    elseif (!empty($values['countryCode'])) {
-      $format = AddressFormat::load($values['countryCode']);
-      return $format->getSubdivisions();
+    $records = $this->recordStorage->loadMultiple($ids, $this->overrideFree);
+
+    return $this->mapFromStorageRecords($records);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete(array $entities) {
+    if ($entities) {
+      // Perform the actual deletion.
+      parent::delete($entities);
+
+      // Remove any children.
+      $this->deleteChildren($entities);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteChildren(array $entities) {
+    $ids = $this->getEntityIds($entities);
+    $records = $this->recordStorage->loadChildren($ids, $this->overrideFree);
+    if ($records) {
+      // Done on the entity level and not on the record level to ensure the
+      // firing of the appropriate hooks.
+      $children = $this->loadMultiple(array_keys($records));
+      $this->delete($children);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doDelete($entities) {
+    $ids = $this->getEntityIds($entities);
+    $this->recordStorage->delete($ids);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doSave($id, EntityInterface $entity) {
+    if ($id !== $entity->id()) {
+      // We don't care about supporting id changes.
+      throw new \Exception('Changing the id of subdivision entities is not supported.');
+    }
+
+    $record = $this->mapToStorageRecord($entity);
+    $this->recordStorage->save($id, $record);
+
+    return $entity->isNew() ? SAVED_NEW : SAVED_UPDATED;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function has($id, EntityInterface $entity) {
+    return $this->recordStorage->exists($id);
+  }
+
+  /**
+   * Gets the IDs of the provided entities.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface[] $entities
+   *   The entities.
+   *
+   * @return array
+   *   The IDs.
+   */
+  protected function getEntityIds(array $entities) {
+    $ids = array_map(function($entity) {
+      return $entity->id();
+    }, $entities);
+
+    return $ids;
   }
 
 }
