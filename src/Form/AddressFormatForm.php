@@ -7,6 +7,10 @@
 
 namespace Drupal\address\Form;
 
+use CommerceGuys\Addressing\Enum\AdministrativeAreaType;
+use CommerceGuys\Addressing\Enum\DependentLocalityType;
+use CommerceGuys\Addressing\Enum\LocalityType;
+use CommerceGuys\Addressing\Enum\PostalCodeType;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -56,6 +60,17 @@ class AddressFormatForm extends EntityForm {
   public function form(array $form, FormStateInterface $formState) {
     $form = parent::form($form, $formState);
     $addressFormat = $this->entity;
+    $fields = [
+      AddressField::RECIPIENT => $this->t('Recipient'),
+      AddressField::ORGANIZATION => $this->t('Organization'),
+      AddressField::ADDRESS_LINE1 => $this->t('Address line 1'),
+      AddressField::ADDRESS_LINE2 => $this->t('Address line 2'),
+      AddressField::SORTING_CODE => $this->t('Sorting code'),
+      AddressField::POSTAL_CODE => $this->t('Postal code'),
+      AddressField::DEPENDENT_LOCALITY => $this->t('Dependent locality'),
+      AddressField::LOCALITY => $this->t('Locality'),
+      AddressField::ADMINISTRATIVE_AREA => $this->t('Administrative area'),
+    ];
 
     $countryCode = $addressFormat->getCountryCode();
     if ($countryCode == 'ZZ') {
@@ -79,21 +94,21 @@ class AddressFormatForm extends EntityForm {
     $form['format'] = array(
       '#type' => 'textarea',
       '#title' => $this->t('Format'),
-      '#description' => $this->t('Available tokens: @tokens', array('@tokens' => implode(', ', $addressFormat->getFieldsTokens()))),
+      '#description' => $this->t('Available tokens: @tokens', array('@tokens' => implode(', ', AddressField::getTokens()))),
       '#default_value' => $addressFormat->getFormat(),
       '#required' => TRUE,
     );
     $form['requiredFields'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Required fields'),
-      '#options' => $addressFormat->getFields(),
+      '#options' => $fields,
       '#default_value' => $addressFormat->getRequiredFields(),
     );
     $form['uppercaseFields'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Uppercase fields'),
       '#description' => t('Uppercased on envelopes to faciliate automatic post handling.'),
-      '#options' => $addressFormat->getFields(),
+      '#options' => $fields,
       '#default_value' => $addressFormat->getUppercaseFields(),
     );
     $form['postalCodePattern'] = array(
@@ -105,7 +120,7 @@ class AddressFormatForm extends EntityForm {
     $form['postalCodePrefix'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Postal code prefix'),
-      '#description' => $this->t('Added to postal codes during formatting.'),
+      '#description' => $this->t('Added to postal codes when formatting an address for international mailing.'),
       '#default_value' => $addressFormat->getPostalCodePrefix(),
       '#size' => 5,
     );
@@ -114,28 +129,54 @@ class AddressFormatForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Postal code type'),
       '#default_value' => $addressFormat->getPostalCodeType(),
-      '#options' => $addressFormat->getPostalCodeTypes(),
+      '#options' =>  [
+        PostalCodeType::POSTAL => $this->t('Postal'),
+        PostalCodeType::ZIP => $this->t('Zip'),
+        PostalCodeType::PIN => $this->t('Pin'),
+      ],
       '#empty_value' => '',
     );
     $form['dependentLocalityType'] = array(
       '#type' => 'select',
       '#title' => $this->t('Dependent locality type'),
       '#default_value' => $addressFormat->getDependentLocalityType(),
-      '#options' => $addressFormat->getDependentLocalityTypes(),
+      '#options' => [
+        DependentLocalityType::DISTRICT => $this->t('District'),
+        DependentLocalityType::NEIGHBORHOOD => $this->t('Neighborhood'),
+        DependentLocalityType::VILLAGE_TOWNSHIP => $this->t('Village township'),
+        DependentLocalityType::SUBURB => $this->t('Suburb'),
+      ],
       '#empty_value' => '',
     );
     $form['localityType'] = array(
       '#type' => 'select',
       '#title' => $this->t('Locality type'),
       '#default_value' => $addressFormat->getLocalityType(),
-      '#options' => $addressFormat->getLocalityTypes(),
+      '#options' => [
+        LocalityType::CITY => t('City'),
+        LocalityType::DISTRICT => t('District'),
+        LocalityType::POST_TOWN => t('Post town'),
+      ],
       '#empty_value' => '',
     );
     $form['administrativeAreaType'] = array(
       '#type' => 'select',
       '#title' => $this->t('Administrative area type'),
       '#default_value' => $addressFormat->getAdministrativeAreaType(),
-      '#options' => $addressFormat->getAdministrativeAreaTypes(),
+      '#options' => [
+        AdministrativeAreaType::AREA => $this->t('Area'),
+        AdministrativeAreaType::COUNTY => $this->t('County'),
+        AdministrativeAreaType::DEPARTMENT => $this->t('Department'),
+        AdministrativeAreaType::DISTRICT => $this->t('District'),
+        AdministrativeAreaType::DO_SI => $this->t('Do si'),
+        AdministrativeAreaType::EMIRATE => $this->t('Emirate'),
+        AdministrativeAreaType::ISLAND => $this->t('Island'),
+        AdministrativeAreaType::OBLAST => $this->t('Oblast'),
+        AdministrativeAreaType::PARISH => $this->t('Parish'),
+        AdministrativeAreaType::PREFECTURE => $this->t('Prefecture'),
+        AdministrativeAreaType::PROVINCE => $this->t('Province'),
+        AdministrativeAreaType::STATE => $this->t('State'),
+      ],
       '#empty_value' => '',
     );
 
@@ -158,12 +199,12 @@ class AddressFormatForm extends EntityForm {
 
     // Require the matching type field for the fields specified in the format.
     $format = $formState->getValue('format');
-    $requirements = array(
-      '%postal_code' => 'postalCodeType',
-      '%dependent_locality' => 'dependentLocalityType',
+    $requirements = [
+      '%postalCode' => 'postalCodeType',
+      '%dependentLocality' => 'dependentLocalityType',
       '%locality' => 'localityType',
-      '%administrative_area' => 'administrativeAreaType',
-    );
+      '%administrativeArea' => 'administrativeAreaType',
+    ];
     foreach ($requirements as $token => $requiredField) {
       if (strpos($format, $token) !== FALSE && !$formState->getValue($requiredField)) {
         $title = $form[$requiredField]['#title'];

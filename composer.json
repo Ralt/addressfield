@@ -5,6 +5,7 @@
   "homepage": "http://drupal.org/project/address",
   "license": "GPL-2.0+",
   "require": {
+    "commerceguys/enum": "dev-master",
     "commerceguys/addressing": "dev-master"
   }
 }
