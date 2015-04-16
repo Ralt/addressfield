@@ -13,21 +13,8 @@ namespace Drupal\address;
 interface AddressFormatImporterInterface {
 
   /**
-   * Returns all importable address formats.
-   *
-   * @return \CommerceGuys\Addressing\Model\AddressFormatInterface[]
-   *    Array of importable address formats.
+   * Imports all the address formats defined in a folder.
    */
-  public function getImportableAddressFormats();
+  public function import();
 
-  /**
-   * Creates a new address format object for the given country code.
-   *
-   * @param string $countryCode
-   *   The country code.
-   *
-   * @return \Drupal\address\Entity\AddressFormat | bool
-   *    The new address format or false if the address format is already imported.
-   */
-  public function importAddressFormat($countryCode);
 }

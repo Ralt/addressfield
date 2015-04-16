@@ -5,3 +5,4 @@
  * Provides functionality for handling postal addresses.
  */
 
+define('ADDRESS_BATCH_SIZE', 10);

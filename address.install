@@ -17,3 +17,14 @@ function address_requirements($phase) {
 
   return $requirements;
 }
+
+/**
+ * Implements hook_install().
+ *
+ * Imports the default address formats and subdivision entries.
+ */
+function address_install() {
+  /** @var \Drupal\address\AddressFormatImporterFactoryInterface $address_format_factory */
+  $address_format_importer_factory = \Drupal::service('address.address_format_importer_factory');
+  $address_format_importer_factory->createInstance()->import();
+}
