@@ -26,9 +26,9 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    */
   protected $addressFormatRepository;
 
-  public function __construct(EntityStorageInterface $storage, $address_formats_folder) {
+  public function __construct(EntityStorageInterface $storage, $addressFormatsFolder) {
     $this->addressFormatStorage = $storage;
-    $this->addressFormatRepository = new AddressFormatRepository($address_formats_folder);
+    $this->addressFormatRepository = new AddressFormatRepository($addressFormatsFolder);
   }
 
   /**
@@ -36,10 +36,10 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    */
   public function import() {
     $operations = [];
-    foreach (array_chunk($this->addressFormatRepository->getAll(), ADDRESS_BATCH_SIZE) as $address_formats) {
+    foreach (array_chunk($this->addressFormatRepository->getAll(), ADDRESS_BATCH_SIZE) as $addressFormats) {
       $operations[] = [
         [get_class($this), 'importAddressFormatBatch'],
-        [$address_formats],
+        [$addressFormats],
       ];
     }
 
@@ -58,9 +58,9 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
     $importable = $this->addressFormatRepository->getAll();
 
     // Remove any already imported address format.
-    foreach ($imported as $address_format) {
-      if (isset($importable[$address_format->id()])) {
-        unset($importable[$address_format->id()]);
+    foreach ($imported as $addressFormat) {
+      if (isset($importable[$addressFormat->id()])) {
+        unset($importable[$addressFormat->id()]);
       }
     }
 
@@ -70,25 +70,25 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
   /**
    * {@inheritdoc}
    */
-  public function createAddressFormat($country_code) {
+  public function createAddressFormat($countryCode) {
     return self::mapAddressFormatEntity(
       $this->addressFormatStorage,
-      $this->addressFormatRepository->get($country_code)
+      $this->addressFormatRepository->get($countryCode)
     );
   }
 
   /**
    * Batch callback for each chunk of address formats.
    *
-   * @param array $address_formats
+   * @param array $addressFormats
    *   The chunk of address formats.
    * @param object &$context
    *   The context of the batch.
    */
-  public static function importAddressFormatBatch($address_formats, &$context) {
+  public static function importAddressFormatBatch($addressFormats, &$context) {
     $storage = \Drupal::service('entity.manager')->getStorage('address_format');
-    foreach ($address_formats as $address_format) {
-      self::importAddressFormat($storage, $address_format);
+    foreach ($addressFormats as $addressFormat) {
+      self::importAddressFormat($storage, $addressFormat);
     }
 
     $context['finished'] = 1;
@@ -99,15 +99,15 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The address format storage.
-   * @param \CommerceGuys\Addressing\Model\AddressFormatInterface $address_format
+   * @param \CommerceGuys\Addressing\Model\AddressFormatInterface $addressFormat
    *   The address format to import.
    */
-  public static function importAddressFormat(EntityStorageInterface $storage, AddressFormatInterface $address_format) {
-    if ($storage->load($address_format->getCountryCode())) {
+  public static function importAddressFormat(EntityStorageInterface $storage, AddressFormatInterface $addressFormat) {
+    if ($storage->load($addressFormat->getCountryCode())) {
       return;
     }
 
-    self::mapAddressFormatEntity($storage, $address_format)->save();
+    self::mapAddressFormatEntity($storage, $addressFormat)->save();
   }
 
   /**
@@ -115,21 +115,21 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The address format storage.
-   * @param \CommerceGuys\Addressing\Model\AddressFormatInterface $address_format
+   * @param \CommerceGuys\Addressing\Model\AddressFormatInterface $addressFormat
    *   The address format to map.
    */
-  protected static function mapAddressFormatEntity(EntityStorageInterface $storage, AddressFormatInterface $address_format) {
+  protected static function mapAddressFormatEntity(EntityStorageInterface $storage, AddressFormatInterface $addressFormat) {
     $values = [
-      'countryCode' => $address_format->getCountryCode(),
-      'format' => $address_format->getFormat(),
-      'requiredFields' => $address_format->getRequiredFields(),
-      'uppercaseFields' => $address_format->getUppercaseFields(),
-      'administrativeAreaType' => $address_format->getAdministrativeAreaType(),
-      'localityType' => $address_format->getLocalityType(),
-      'dependentLocalityType' => $address_format->getDependentLocalityType(),
-      'postalCodeType' => $address_format->getPostalCodeType(),
-      'postalCodePattern' => $address_format->getPostalCodePattern(),
-      'postalCodePrefix' => $address_format->getPostalCodePrefix(),
+      'countryCode' => $addressFormat->getCountryCode(),
+      'format' => $addressFormat->getFormat(),
+      'requiredFields' => $addressFormat->getRequiredFields(),
+      'uppercaseFields' => $addressFormat->getUppercaseFields(),
+      'administrativeAreaType' => $addressFormat->getAdministrativeAreaType(),
+      'localityType' => $addressFormat->getLocalityType(),
+      'dependentLocalityType' => $addressFormat->getDependentLocalityType(),
+      'postalCodeType' => $addressFormat->getPostalCodeType(),
+      'postalCodePattern' => $addressFormat->getPostalCodePattern(),
+      'postalCodePrefix' => $addressFormat->getPostalCodePrefix(),
     ];
 
     return $storage->create($values);

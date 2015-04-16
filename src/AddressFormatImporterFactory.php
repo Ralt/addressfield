@@ -16,15 +16,15 @@ class AddressFormatImporterFactory implements AddressFormatImporterFactoryInterf
    */
   protected $entityManager;
 
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityManagerInterface $entityManager) {
+    $this->entityManager = $entityManager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createInstance($address_formats_folder = NULL) {
-    return new AddressFormatImporter($this->entityManager->getStorage('address_format'), $address_formats_folder);
+  public function createInstance($addressFormatsFolder = NULL) {
+    return new AddressFormatImporter($this->entityManager->getStorage('address_format'), $addressFormatsFolder);
   }
 
 }

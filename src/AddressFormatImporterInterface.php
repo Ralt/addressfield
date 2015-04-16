@@ -28,9 +28,9 @@ interface AddressFormatImporterInterface {
   /**
    * Creates an AddressFormat.
    *
-   * @param string $country_code
+   * @param string $countryCode
    *   The country code of the address format.
    */
-  public function createAddressFormat($country_code);
+  public function createAddressFormat($countryCode);
 
 }

@@ -15,12 +15,12 @@ interface AddressFormatImporterFactoryInterface {
   /**
    * Creates an instance of an AddressFormatImporter.
    *
-   * @param string $address_formats_folder
+   * @param string $addressFormatsFolder
    *   The address formats folder of definitions.
    *
    * @return \Drupal\address\AddressFormatImporterInterface
    *   An address format importer.
    */
-  public function createInstance($address_format_folder);
+  public function createInstance($addressFormatsFolder);
 
 }
