@@ -17,3 +17,4 @@ services:
 
   address.address_format_importer_factory:
     class: Drupal\address\AddressFormatImporterFactory
+    arguments: ['@entity.manager']

@@ -15,14 +15,20 @@ use \CommerceGuys\Addressing\Model\AddressFormatInterface;
 class AddressFormatImporter implements AddressFormatImporterInterface {
 
   /**
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $addressFormatStorage;
+
+  /**
    * The address format manager.
    *
    * @var \CommerceGuys\Addressing\Repository\AddressFormatRepositoryInterface
    */
   protected $addressFormatRepository;
 
-  public function __construct($address_formats_folder) {
-    $this->addressFormatRepository = new AddressFormatRepository($adress_formats_folder);
+  public function __construct(EntityStorageInterface $storage, $address_formats_folder) {
+    $this->addressFormatStorage = $storage;
+    $this->addressFormatRepository = new AddressFormatRepository($address_formats_folder);
   }
 
   /**
@@ -42,6 +48,33 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
       'init_message' => t('Preparing to import address formats'),
       'operations' => $operations,
     ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getImportableAddressFormats() {
+    $imported = $this->addressFormatStorage->loadMultiple();
+    $importable = $this->addressFormatRepository->getAll();
+
+    // Remove any already imported address format.
+    foreach ($imported as $address_format) {
+      if (isset($importable[$address_format->id()])) {
+        unset($importable[$address_format->id()]);
+      }
+    }
+
+    return $importable;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createAddressFormat($country_code) {
+    return self::mapAddressFormatEntity(
+      $this->addressFormatStorage,
+      $this->addressFormatRepository->get($country_code)
+    );
   }
 
   /**
@@ -69,11 +102,23 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    * @param \CommerceGuys\Addressing\Model\AddressFormatInterface $address_format
    *   The address format to import.
    */
-  protected static function importAddressFormat(EntityStorageInterface $storage, AddressFormatInterface $address_format) {
+  public static function importAddressFormat(EntityStorageInterface $storage, AddressFormatInterface $address_format) {
     if ($storage->load($address_format->getCountryCode())) {
       return;
     }
 
+    self::mapAddressFormatEntity($storage, $address_format)->save();
+  }
+
+  /**
+   * Maps an AddressFormat with an address_format entity and returns the entity.
+   *
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
+   *   The address format storage.
+   * @param \CommerceGuys\Addressing\Model\AddressFormatInterface $address_format
+   *   The address format to map.
+   */
+  protected static function mapAddressFormatEntity(EntityStorageInterface $storage, AddressFormatInterface $address_format) {
     $values = [
       'countryCode' => $address_format->getCountryCode(),
       'format' => $address_format->getFormat(),
@@ -87,7 +132,7 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
       'postalCodePrefix' => $address_format->getPostalCodePrefix(),
     ];
 
-    $storage->create($values)->save();
+    return $storage->create($values);
   }
 
 }

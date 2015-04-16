@@ -17,4 +17,20 @@ interface AddressFormatImporterInterface {
    */
   public function import();
 
+  /**
+   * Gets the list of not imported but available formats.
+   *
+   * @return array
+   *   The list of importable address formats.
+   */
+  public function getImportableAddressFormats();
+
+  /**
+   * Creates an AddressFormat.
+   *
+   * @param string $country_code
+   *   The country code of the address format.
+   */
+  public function createAddressFormat($country_code);
+
 }

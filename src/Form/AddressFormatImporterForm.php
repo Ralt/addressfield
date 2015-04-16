@@ -29,44 +29,45 @@ class AddressFormatImporterForm extends FormBase {
    * Constructs a new AddressFormatImporterForm.
    */
   public function __construct() {
-    $this->addressFormatImporter = \Drupal::service('address.address_format_importer');
+    $this->addressFormatImporter = \Drupal::service('address.address_format_importer_factory')->createInstance();
+    $this->addressFormatStorage = \Drupal::service('entity.manager')->getStorage('address_format');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $formState) {
-    $addressFormats = $this->addressFormatImporter->getImportableAddressFormats();
+  public function buildForm(array $form, FormStateInterface $formState = NULL) {
+    $address_formats = $this->addressFormatImporter->getImportableAddressFormats();
 
-    if (!$addressFormats) {
+    if (count($address_formats) === 0) {
       $form['message'] = array(
         '#markup' => $this->t('All address formats are already imported.'),
       );
+      return $form;
     }
-    else {
-      $form['country_code'] = array(
-        '#type' => 'select',
-        '#title' => $this->t('Country'),
-        '#description' => $this->t('Please select the country you would like to import.'),
-        '#required' => TRUE,
-        '#options' => CountryManager::getStandardList(),
-      );
 
-      $form['actions']['#type'] = 'actions';
-      $form['actions']['import'] = array(
-        '#type' => 'submit',
-        '#button_type' => 'primary',
-        '#name' => 'import',
-        '#value' => $this->t('Import'),
-        '#submit' => array('::submitForm'),
-      );
-      $form['actions']['import_new'] = array(
-        '#type' => 'submit',
-        '#name' => 'import_and_new',
-        '#value' => $this->t('Import and new'),
-        '#submit' => array('::submitForm'),
-      );
-    }
+    $form['country_code'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Country'),
+      '#description' => $this->t('Please select the country you would like to import.'),
+      '#required' => TRUE,
+      '#options' => CountryManager::getStandardList(),
+    );
+
+    $form['actions']['#type'] = 'actions';
+    $form['actions']['import'] = array(
+      '#type' => 'submit',
+      '#button_type' => 'primary',
+      '#name' => 'import',
+      '#value' => $this->t('Import'),
+      '#submit' => array('::submitForm'),
+    );
+    $form['actions']['import_new'] = array(
+      '#type' => 'submit',
+      '#name' => 'import_and_new',
+      '#value' => $this->t('Import and new'),
+      '#submit' => array('::submitForm'),
+    );
 
     return $form;
   }
@@ -74,28 +75,26 @@ class AddressFormatImporterForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $formState) {
-    $values = $formState->getValues();
-    $addressFormat = $this->addressFormatImporter->importAddressFormat(
-      $values['country_code']
-    );
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $address_format = $this->addressFormatImporter->createAddressFormat($values['country_code']);
 
     try {
-      $addressFormat->save();
+      $address_format->save();
       drupal_set_message(
-        $this->t('Imported the %label address format.', array('%label' => $addressFormat->label()))
+        $this->t('Imported the %label address format.', array('%label' => $address_format->label()))
       );
-      $triggeringElement = $formState->getTriggeringElement();
-      if ($triggeringElement['#name'] == 'import_and_new') {
-        $formState->setRebuild();
+      $triggering_element = $form_state->getTriggeringElement();
+      if ($triggering_element['#name'] == 'import_and_new') {
+        $form_state->setRebuild();
       }
       else {
-        $formState->setRedirect('entity.address_format.list');
+        $form_state->setRedirect('entity.address_format.collection');
       }
     } catch (\Exception $e) {
-      drupal_set_message($this->t('The %label address format was not imported.', array('%label' => $addressFormat->label())), 'error');
+      drupal_set_message($this->t('The %label address format was not imported.', array('%label' => $address_format->label())), 'error');
       $this->logger('address')->error($e);
-      $formState->setRebuild();
+      $form_state->setRebuild();
     }
   }
 
