@@ -29,7 +29,7 @@ class AddressFormatImporterForm extends FormBase {
    * Constructs a new AddressFormatImporterForm.
    */
   public function __construct() {
-    $this->addressFormatImporter = \Drupal::service('address.address_format_importer_factory')->createInstance();
+    $this->addressFormatImporter = \Drupal::service('address.address_format_importer');
     $this->addressFormatStorage = \Drupal::service('entity.manager')->getStorage('address_format');
   }
 

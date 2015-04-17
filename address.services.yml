@@ -15,6 +15,6 @@ services:
     class: CommerceGuys\Addressing\Formatter\PostalFormatter
     arguments: ['@address.data_provider']
 
-  address.address_format_importer_factory:
-    class: Drupal\address\AddressFormatImporterFactory
+  address.address_format_importer:
+    class: Drupal\address\AddressFormatImporter
     arguments: ['@entity.manager']

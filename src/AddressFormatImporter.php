@@ -8,6 +8,7 @@
 namespace Drupal\address;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityManager;
 use CommerceGuys\Addressing\Repository\AddressFormatRepository;
 use CommerceGuys\Addressing\Model\AddressFormatInterface;
 
@@ -25,9 +26,9 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
    */
   protected $addressFormatRepository;
 
-  public function __construct(EntityStorageInterface $storage, $addressFormatsFolder) {
-    $this->addressFormatStorage = $storage;
-    $this->addressFormatRepository = new AddressFormatRepository($addressFormatsFolder);
+  public function __construct(EntityManager $manager) {
+    $this->addressFormatStorage = $manager->getStorage('address_format');
+    $this->addressFormatRepository = new AddressFormatRepository();
   }
 
   /**

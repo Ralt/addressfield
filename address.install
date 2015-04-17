@@ -24,7 +24,7 @@ function address_requirements($phase) {
  * Imports the default address formats and subdivision entries.
  */
 function address_install() {
-  /** @var \Drupal\address\AddressFormatImporterFactoryInterface $address_format_factory */
-  $address_format_importer_factory = \Drupal::service('address.address_format_importer_factory');
-  $address_format_importer_factory->createInstance()->import();
+  /** @var \Drupal\address\AddressFormatImporterInterface $address_format */
+  $address_format_importer = \Drupal::service('address.address_format_importer');
+  $address_format_importer->import();
 }
