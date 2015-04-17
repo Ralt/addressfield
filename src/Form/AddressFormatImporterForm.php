@@ -46,12 +46,20 @@ class AddressFormatImporterForm extends FormBase {
       return $form;
     }
 
+    $countries = CountryManager::getStandardList();
+    $addressFormatsCodes = array_keys($addressFormats);
+    foreach ($countries as $countryCode => $country) {
+      if (!in_array($countryCode, $addressFormatsCodes, TRUE)) {
+        unset($countries[$countryCode]);
+      }
+    }
+
     $form['country_code'] = array(
       '#type' => 'select',
       '#title' => $this->t('Country'),
       '#description' => $this->t('Please select the country you would like to import.'),
       '#required' => TRUE,
-      '#options' => CountryManager::getStandardList(),
+      '#options' => $countries,
     );
 
     $form['actions']['#type'] = 'actions';
