@@ -7,10 +7,9 @@
 
 namespace Drupal\address;
 
-use \Drupal\Core\Entity\EntityManagerInterface;
-use \Drupal\Core\Entity\EntityStorageInterface;
-use \CommerceGuys\Addressing\Repository\AddressFormatRepository;
-use \CommerceGuys\Addressing\Model\AddressFormatInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use CommerceGuys\Addressing\Repository\AddressFormatRepository;
+use CommerceGuys\Addressing\Model\AddressFormatInterface;
 
 class AddressFormatImporter implements AddressFormatImporterInterface {
 

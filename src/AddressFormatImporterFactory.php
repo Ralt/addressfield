@@ -7,7 +7,7 @@
 
 namespace Drupal\address;
 
-use \Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 
 class AddressFormatImporterFactory implements AddressFormatImporterFactoryInterface {
 

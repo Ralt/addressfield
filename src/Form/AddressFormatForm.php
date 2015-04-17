@@ -11,6 +11,7 @@ use CommerceGuys\Addressing\Enum\AdministrativeAreaType;
 use CommerceGuys\Addressing\Enum\DependentLocalityType;
 use CommerceGuys\Addressing\Enum\LocalityType;
 use CommerceGuys\Addressing\Enum\PostalCodeType;
+use CommerceGuys\Addressing\Enum\AddressField;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
