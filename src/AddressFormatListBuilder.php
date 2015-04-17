@@ -66,7 +66,7 @@ class AddressFormatListBuilder extends ConfigEntityListBuilder {
     // Show the 'List subdivisions' operation if the parent format
     // uses at least the administrative area subdivision field.
     $format = $entity->getFormat();
-    if (strpos($format, '%administrative_area') !== FALSE) {
+    if (strpos($format, '%administrativeArea') !== FALSE) {
       $operations['subdivisions'] = array(
         'title' => $this->t('List subdivisions'),
         'url' => Url::fromRoute('entity.subdivision.collection', array(

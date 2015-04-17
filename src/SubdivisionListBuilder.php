@@ -8,7 +8,7 @@
 namespace Drupal\address;
 
 use CommerceGuys\Addressing\Model\SubdivisionInterface;
-use Drupal\address\AddressFormatInterface;
+use CommerceGuys\Addressing\Model\AddressFormatInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
