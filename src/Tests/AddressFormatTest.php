@@ -7,7 +7,8 @@
 
 namespace Drupal\address\Tests;
 
-use Drupal\Core\Locale\CountryManager;
+use CommerceGuys\Addressing\Repository\AddressFormatRepository;
+use Drupal\address\AddressFormatImporter;
 use Drupal\simpletest\WebTestBase;
 
 
@@ -17,6 +18,7 @@ use Drupal\simpletest\WebTestBase;
  * @group address
  */
 class AddressFormatTest extends WebTestBase {
+
   /**
    * Modules to enable.
    *
@@ -24,80 +26,77 @@ class AddressFormatTest extends WebTestBase {
    */
   public static $modules = array('system', 'user', 'address');
 
-  /**
-   *
-   */
+  /** @var \Drupal\Core\Entity\EntityStorageInterface */
+  protected $addressFormatStorage;
+
+  /** @var CommerceGuys\Addressing\Repository\AddressFormatRepositoryInterface */
+  protected $addressFormatRepository;
+
   protected function setUp() {
     parent::setUp();
+    $user = $this->drupalCreateUser(['administer address formats']);
+    $this->drupalLogin($user);
+
+    $this->addressFormatStorage = \Drupal::service('entity.manager')->getStorage('address_format');
+    $this->addressFormatRepository = new AddressFormatRepository();
   }
 
   /**
-   * Utility function to create a random address format.
+   * Tests that the address format forms exist.
+   */
+  public function testAddressFormatFormExists() {
+    $this->drupalGet('admin/config/regional/address-formats/');
+    $this->assertResponse(200, 'The address format list builder exists.');
+
+    $this->drupalGet('admin/config/regional/address-formats/add');
+    $this->assertResponse(200, 'The address format add form exists.');
+  }
+
+  /**
+   * Tests that the address formats are imported at startup.
    *
-   * @return AddressFormat A random address format config entity.
+   * Protected because it's called by testDeleteAddressFormat, it'd be pointless to call it twice.
    */
-  protected function createRandomAddressFormat() {
-    $countryCodes = array_keys(CountryManager::getStandardList());
-
-    // Find a random country code that doesn't exist yet.
-    while ($key = array_rand($countryCodes)) {
-      if (entity_load('address_format', $countryCodes[$key])) {
-        continue;
-      }
-      $countryCode = $countryCodes[$key];
-      break;
+  protected function defaultAddressFormats() {
+    // batch process is not run with anything but the UI because the form API handles batches
+    foreach ($this->addressFormatRepository->getAll() as $format) {
+      AddressFormatImporter::importAddressFormat($this->addressFormatStorage, $format);
     }
-
-    $values = array(
-      'countryCode' => $countryCode,
+    $this->assertTrue(
+      count($this->addressFormatStorage->loadMultiple()) === count($this->addressFormatRepository->getAll()),
+      'The importer imported all the address formats.'
     );
-
-    $addressFormat = entity_create('address_format', $values);
-    $addressFormat->save();
-    return $addressFormat;
   }
 
   /**
-   * Tests creating a address format programmatically.
+   * Tests that deleting an address format works.
+   *
+   * Protected because it's called by testAddAddressFormat, it'd be pointless to call it twice.
    */
-  function testAddressFormatCreationProgramatically() {
-    // Create a address format type programmaticaly.
-    $addressFormat = $this->createRandomAddressFormat();
-    $addressFormatExists = (bool) entity_load('address_format', $addressFormat->id());
-    $this->assertTrue($addressFormatExists, 'The new address format has been created in the database.');
-
-    // Login a test user.
-    $webUser = $this->drupalCreateUser(array('administer address formats'));
-    $this->drupalLogin($webUser);
-    // Visit the address format edit page.
-    $this->drupalGet('admin/config/regional/address-format/' . $addressFormat->id());
-    $this->assertResponse(200, 'The new address format can be accessed at admin/config/regional/address-format.');
+  protected function deleteAddressFormat() {
+    $this->defaultAddressFormats();
+    $this->drupalPostForm('admin/config/regional/address-formats/manage/AC/delete', ['confirm' => 1], t('Delete'));
+    $this->assertTrue(
+      (count($this->addressFormatRepository->getAll()) - 1) === count($this->addressFormatStorage->loadMultiple()),
+      'There is now one less address format than in the repository.'
+    );
   }
 
   /**
-   * Tests creating a address format via the import form.
+   * Tests that adding a new address format works.
    */
-  function testAddressFormatCreationImportForm() {
-    $countryCodes = array_keys(CountryManager::getStandardList());
+  public function testAddAddressFormat() {
+    $this->deleteAddressFormat();
 
-    // Login a test user.
-    $webUser = $this->drupalCreateUser(array('administer address formats'));
-    $this->drupalLogin($webUser);
-    // Find a random countryCode that doesn't exist yet.
-    while ($key = array_rand($countryCodes)) {
-      if (entity_load('address_format', $countryCodes[$key])) {
-        continue;
-      }
-      $countryCode = $countryCodes[$key];
-      break;
-    }
-
-    $edit = array(
-      'countryCode' => $countryCode,
+    $this->drupalPostForm(
+      'admin/config/regional/address-formats/add',
+      ['countryCode' => 'AC', 'format' => 'foo'],
+      t('Save')
     );
-    $this->drupalPostForm('admin/config/regional/address-format/import', $edit, t('Import'));
-
-    $this->drupalGet('admin/config/regional/address-format/' . $countryCode);
-    $this->assertResponse(200, 'The new address format can be accessed at admin/config/regional/address-format.');
+    $this->assertTrue(
+      count($this->addressFormatRepository->getAll()) === count($this->addressFormatStorage->loadMultiple()),
+      'There is now as many address formats than in the repository.'
+    );
   }
+
 }
